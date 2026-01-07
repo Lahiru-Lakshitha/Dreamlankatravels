@@ -1,0 +1,8 @@
+{
+  "/contact/page": "app/contact/page.js",
+  "/trip-planner/page": "app/trip-planner/page.js",
+  "/destinations/page": "app/destinations/page.js",
+  "/page": "app/page.js",
+  "/auth/page": "app/auth/page.js",
+  "/quote/page": "app/quote/page.js"
+}
