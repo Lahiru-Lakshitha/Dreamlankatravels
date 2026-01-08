@@ -21,7 +21,7 @@ export function MetaTags({
 }: MetaTagsProps) {
   useEffect(() => {
     // Update document title
-    document.title = `${title} | Voyages Lanka`;
+    document.title = `${title} | Dream Lanka Travels`;
 
     // Helper to set meta tag
     const setMeta = (name: string, content: string, isProperty = false) => {
@@ -59,7 +59,7 @@ export function MetaTags({
 
     // Cleanup function to reset to defaults
     return () => {
-      document.title = 'Voyages Lanka | Discover Sri Lanka';
+      document.title = 'Dream Lanka Travels | Discover Sri Lanka';
     };
   }, [title, description, image, url, type, publishedTime, author]);
 

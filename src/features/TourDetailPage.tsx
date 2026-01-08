@@ -361,7 +361,7 @@ export default function TourDetailPage() {
     <div className="min-h-screen pt-20">
       <MetaTags
         title={`${tour.name} | Sri Lanka Tour`}
-        description={tour.short_description || tour.description?.substring(0, 160) || `Experience ${tour.name} with Voyages Lanka`}
+        description={tour.short_description || tour.description?.substring(0, 160) || `Experience ${tour.name} with Dream Lanka Travels`}
       />
 
       {/* Hero Section */}

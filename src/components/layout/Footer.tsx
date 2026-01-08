@@ -1,5 +1,6 @@
 "use client";
-
+import Image from "next/image";
+import { cn } from "@/lib/utils";
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, ArrowRight, Award, Users, Globe, Star } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -74,14 +75,17 @@ export default function Footer() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Brand Column */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 mb-4 group">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[hsl(43,60%,52%)] to-[hsl(43,55%,42%)] flex items-center justify-center shadow-lg shadow-[hsl(43,60%,52%)]/20 transition-transform group-hover:scale-105">
-                <span className="text-[hsl(160,60%,18%)] font-bold text-xl">V</span>
-              </div>
-              <span className="text-xl font-bold text-white">
-                Voyages Lanka
-              </span>
-            </Link>
+            <Link href="/" className="flex items-center gap-3">
+  <Image
+  src="/logo.png"
+  alt="Dream Lanka Travels Logo"
+  width={180}
+  height={48}
+  priority
+  className="transition-all duration-300 brightness-100"
+
+  />
+</Link>
             <p className="text-white/60 text-sm mb-4 leading-relaxed max-w-xs">
               {t.footer.description}
             </p>
@@ -203,7 +207,7 @@ export default function Footer() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
             <p className="text-white/40 text-xs text-center sm:text-left">
-              © {new Date().getFullYear()} Voyages Lanka. {t.footer.allRightsReserved}
+              © {new Date().getFullYear()} Dream Lanka Travels. {t.footer.allRightsReserved}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               {footerLinks.legal.map((link, index) => (

@@ -272,9 +272,12 @@ export function HeroCarousel() {
                       transitionDelay: isActive ? '0ms' : '0ms',
                     }}
                   >
-                    <span className="inline-block px-4 py-2 text-xs sm:text-sm font-medium bg-sunset/20 text-sunset rounded-full backdrop-blur-sm border border-sunset/30">
-                      ✨ Award-Winning Sri Lanka Tours
-                    </span>
+                    <span className="inline-block px-5 py-2 text-xs sm:text-sm font-semibold 
+  text-white bg-white/20 rounded-full backdrop-blur-md 
+  border border-white/30 shadow-lg">
+  ✨ Award-Winning Sri Lanka Tours ✨
+</span>
+
                   </div>
 
                   {/* Animated Headline */}

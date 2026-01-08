@@ -11,7 +11,9 @@
     /* Premium Luxury Travel Color Palette - Light Mode */
     --background: 0 0% 100%; /* Pure white */
     --foreground: 160 40% 15%; /* Deep green-black */
-
+ body {
+    font-family: var(--font-raleway), system-ui, sans-serif;
+  }
     --card: 0 0% 100%;
     --card-foreground: 160 40% 15%;
 

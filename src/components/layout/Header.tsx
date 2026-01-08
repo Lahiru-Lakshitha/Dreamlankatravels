@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -32,6 +32,7 @@ export default function Header() {
     { name: t.home?.planYourJourney || 'Trip Planner', path: '/trip-planner' },
     { name: t.nav.about, path: '/about' },
     { name: t.nav.blog, path: '/blog' },
+    { name: "FAQ", path: "/faq" },
     { name: t.nav.contact, path: '/contact' },
   ];
 
@@ -111,17 +112,19 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-sunset flex items-center justify-center">
-              <span className="text-ocean-dark font-serif font-bold text-xl">V</span>
-            </div>
-            <span className={cn(
-              "font-serif text-2xl font-bold transition-colors duration-300",
-              isScrolled || !isHome ? "text-foreground" : "text-sand"
-            )}>
-              Voyages Lanka
-            </span>
-          </Link>
+          <Link href="/" className="flex items-center gap-3">
+  <Image
+    src="/logo.png"
+    alt="Dream Lanka Travels Logo"
+    width={280}
+    height={50}
+    priority
+    className={cn(
+      "transition-all duration-300",
+      isScrolled || !isHome ? "brightness-100" : "brightness-0 invert"
+    )}
+  />
+</Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">

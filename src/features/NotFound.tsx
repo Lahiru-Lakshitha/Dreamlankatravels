@@ -15,7 +15,7 @@ const NotFound = () => {
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", pathname);
-    document.title = "Page Not Found | Voyages Lanka";
+    document.title = "Page Not Found | Dream Lanka Travels";
   }, [pathname]);
 
   const suggestedLinks = [

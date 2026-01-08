@@ -12,7 +12,7 @@ const team = [
   {
     name: 'Rajitha Perera',
     role: 'Founder & CEO',
-    description: 'With 15 years in tourism, Rajitha founded Voyages Lanka to share his love for Sri Lanka with the world.',
+    description: 'With 15 years in tourism, Rajitha founded Dream Lanka Travels to share his love for Sri Lanka with the world.',
   },
   {
     name: 'Amali Fernando',
@@ -54,13 +54,13 @@ export default function AboutPage() {
     <div className="min-h-screen pt-20">
       <MetaTags
         title="About Us"
-        description="Learn about Voyages Lanka - Sri Lanka's trusted tour operator since 2013. Meet our team of local experts dedicated to creating unforgettable travel experiences."
+        description="Learn about Dream Lanka Travels - Sri Lanka's trusted tour operator since 2013. Meet our team of local experts dedicated to creating unforgettable travel experiences."
       />
 
       {/* Hero Strip */}
       <PageHeroStrip
         accentLabel="Our Story"
-        title="About Voyages Lanka"
+        title="About Dream Lanka Travels"
         subtitle="We're more than just a tour company – we're storytellers, experience curators, and passionate ambassadors of Sri Lanka."
       />
 
@@ -74,7 +74,7 @@ export default function AboutPage() {
               </h2>
               <div className="space-y-4 text-muted-foreground text-base sm:text-lg leading-relaxed">
                 <p>
-                  Founded in 2013, Voyages Lanka began with a simple mission: to share
+                  Founded in 2013, Dream Lanka Travels began with a simple mission: to share
                   the authentic beauty of Sri Lanka with travelers from around the world.
                 </p>
                 <p>

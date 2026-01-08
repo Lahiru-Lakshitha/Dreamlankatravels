@@ -25,7 +25,7 @@ const contactInfo = [
   {
     icon: Phone,
     title: 'Phone',
-    details: ['+94 11 234 5678', '+94 77 123 4567'],
+    details: ['+94 76 1818048', '+94 76 1818048'],
   },
   {
     icon: Mail,
@@ -68,7 +68,7 @@ export default function ContactPage() {
     <div className="min-h-screen pt-20">
       <MetaTags
         title="Contact Us"
-        description="Get in touch with Voyages Lanka. We're here to help plan your perfect Sri Lankan adventure. Call, email, or visit our Colombo office."
+        description="Get in touch with Dream Lanka Travels. We're here to help plan your perfect Sri Lankan adventure. Call, email, or visit our Colombo office."
       />
 
       {/* Hero Strip */}

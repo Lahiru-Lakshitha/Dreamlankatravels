@@ -77,7 +77,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
       {/* Admin Response */}
       {review.admin_response && (
         <div className="mt-4 p-4 bg-muted/50 rounded-lg border-l-4 border-ocean">
-          <p className="text-sm font-medium text-ocean mb-1">Response from Voyages Lanka</p>
+          <p className="text-sm font-medium text-ocean mb-1">Response from Dream Lanka Travels</p>
           <p className="text-sm text-muted-foreground">{review.admin_response}</p>
         </div>
       )}

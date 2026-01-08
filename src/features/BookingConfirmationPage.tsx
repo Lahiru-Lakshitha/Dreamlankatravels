@@ -30,7 +30,7 @@ export default function BookingConfirmationPage() {
           </h1>
 
           <p className="text-muted-foreground text-lg mb-8">
-            Thank you for choosing Voyages Lanka. Our travel experts will review your request
+            Thank you for choosing Dream Lanka Travels. Our travel experts will review your request
             and contact you within 24 hours to confirm availability and finalize the details.
           </p>
 
