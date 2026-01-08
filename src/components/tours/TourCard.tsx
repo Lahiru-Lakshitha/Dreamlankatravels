@@ -29,7 +29,7 @@ export function TourCard({ tour }: TourCardProps) {
   const defaultImage = 'https://images.unsplash.com/photo-1588416936097-41850ab3d86d?w=800';
 
   return (
-    <div className="bg-card rounded-xl sm:rounded-2xl overflow-hidden shadow-card hover-lift group">
+    <div className="bg-card dark:bg-white/5 rounded-xl sm:rounded-2xl overflow-hidden shadow-card dark:shadow-none hover-lift group border border-transparent dark:border-white/10 dark:hover:border-primary/30 transition-all duration-500">
       <Link href={`/tours/${tour.slug}`}>
         <div className="relative h-48 sm:h-56 overflow-hidden">
           <Image

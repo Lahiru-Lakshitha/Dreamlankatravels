@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
 import Header from './Header';
 import Footer from './Footer';
-import WhatsAppButton from './WhatsAppButton';
+import { FloatingChat } from '@/components/features/FloatingChat';
+import { BackToTop } from '@/components/ui/back-to-top';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,13 +10,14 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col font-sans">
       <Header />
       <main className="flex-grow">
         {children}
       </main>
       <Footer />
-      <WhatsAppButton />
+      <FloatingChat />
+      <BackToTop />
     </div>
   );
 }

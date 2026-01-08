@@ -275,8 +275,8 @@ export function HeroCarousel() {
                     <span className="inline-block px-5 py-2 text-xs sm:text-sm font-semibold 
   text-white bg-white/20 rounded-full backdrop-blur-md 
   border border-white/30 shadow-lg">
-  ✨ Award-Winning Sri Lanka Tours ✨
-</span>
+                      ✨ Award-Winning Sri Lanka Tours ✨
+                    </span>
 
                   </div>
 
@@ -287,12 +287,32 @@ export function HeroCarousel() {
                   <AnimatedSubtitle text={slide.subtitle} isActive={isActive} />
 
                   {/* Animated CTA */}
-                  <div className="pt-2 sm:pt-4">
+                  <div className="pt-6 sm:pt-8 flex flex-col items-center gap-8">
                     <AnimatedCTA
                       text={slide.cta.text}
                       link={slide.cta.link}
                       isActive={isActive}
                     />
+
+                    {/* Hero Trust Badges - Staggered Appearance */}
+                    <div
+                      className={`flex flex-wrap justify-center gap-4 sm:gap-6 transition-all duration-1000 delay-1000 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                    >
+                      {[
+                        { text: '5-Star Rated', stars: true },
+                        { text: '10+ Years Experience', icon: '🏆' },
+                        { text: '24/7 Local Support', icon: '📞' }
+                      ].map((badge, i) => (
+                        <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/30 backdrop-blur-md border border-white/10 text-white/90 text-sm font-medium">
+                          {badge.stars ? (
+                            <div className="flex text-sunset">★★★★★</div>
+                          ) : (
+                            <span>{badge.icon}</span>
+                          )}
+                          <span>{badge.text}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -306,7 +326,7 @@ export function HeroCarousel() {
         <button
           onClick={prevSlide}
           disabled={isTransitioning}
-          className="absolute left-4 xl:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 xl:w-14 xl:h-14 rounded-full bg-sand/10 backdrop-blur-md border border-sand/20 flex items-center justify-center text-sand hover:bg-sand/20 hover:border-sand/30 transition-all duration-300 disabled:opacity-50 group"
+          className="absolute left-4 xl:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 xl:w-14 xl:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all duration-300 disabled:opacity-50 group shadow-lg"
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-5 h-5 xl:w-6 xl:h-6 transition-transform group-hover:-translate-x-0.5" />
@@ -314,7 +334,7 @@ export function HeroCarousel() {
         <button
           onClick={nextSlide}
           disabled={isTransitioning}
-          className="absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 xl:w-14 xl:h-14 rounded-full bg-sand/10 backdrop-blur-md border border-sand/20 flex items-center justify-center text-sand hover:bg-sand/20 hover:border-sand/30 transition-all duration-300 disabled:opacity-50 group"
+          className="absolute right-4 xl:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 xl:w-14 xl:h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-white/20 hover:scale-110 transition-all duration-300 disabled:opacity-50 group shadow-lg"
           aria-label="Next slide"
         >
           <ChevronRight className="w-5 h-5 xl:w-6 xl:h-6 transition-transform group-hover:translate-x-0.5" />
@@ -322,15 +342,15 @@ export function HeroCarousel() {
       </div>
 
       {/* Premium Dots Navigation with Progress */}
-      <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 sm:gap-3">
+      <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 sm:gap-3 px-4 py-2 rounded-full bg-black/20 backdrop-blur-sm border border-white/5">
         {slides.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
             disabled={isTransitioning}
-            className={`relative h-1.5 sm:h-2 rounded-full transition-all duration-500 disabled:cursor-not-allowed overflow-hidden ${index === currentSlide
-              ? 'w-8 sm:w-12 bg-sand/30'
-              : 'w-1.5 sm:w-2 bg-sand/30 hover:bg-sand/50'
+            className={`relative h-2 rounded-full transition-all duration-500 disabled:cursor-not-allowed overflow-hidden ${index === currentSlide
+              ? 'w-8 sm:w-12 bg-white/30'
+              : 'w-2 bg-white/30 hover:bg-white/50'
               }`}
             aria-label={`Go to slide ${index + 1}`}
           >

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Star, Award } from 'lucide-react';
+import { ArrowRight, Star, Award, CheckCircle2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { HeroCarousel } from '@/components/home/HeroCarousel';
@@ -11,10 +11,15 @@ import { StatsSection } from '@/components/home/StatsSection';
 import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 import { NewsletterSection } from '@/components/home/NewsletterSection';
 import { InstagramFeed } from '@/components/home/InstagramFeed';
+import { FAQSection } from '@/components/home/FAQSection';
+import { GlassCard } from '@/components/ui/glass-card';
+
+// Images
 import beachImage from '@/assets/destination-beach.jpg';
 import templeImage from '@/assets/destination-temple.jpg';
 import wildlifeImage from '@/assets/destination-wildlife.jpg';
 import trainImage from '@/assets/destination-train.jpg';
+import { cn } from '@/lib/utils';
 
 export default function HomePage() {
   const { t } = useLanguage();
@@ -25,24 +30,28 @@ export default function HomePage() {
       description: t.home.goldenSands,
       image: beachImage,
       link: '/tours?type=beach',
+      delay: "100"
     },
     {
       title: t.home.ancientTemples,
       description: t.home.sacredHeritage,
       image: templeImage,
       link: '/tours?type=cultural',
+      delay: "200"
     },
     {
       title: t.home.wildlifeSafari,
       description: t.home.majesticElephants,
       image: wildlifeImage,
       link: '/tours?type=wildlife',
+      delay: "300"
     },
     {
       title: t.home.scenicRailways,
       description: t.home.mountainJourneys,
       image: trainImage,
       link: '/tours?destination=ella',
+      delay: "400"
     },
   ];
 
@@ -53,6 +62,7 @@ export default function HomePage() {
       price: t.home.fromPrice.replace('{price}', '$899'),
       highlights: ['Sigiriya', 'Kandy', 'Dambulla', 'Polonnaruwa'],
       image: templeImage,
+      tag: "Best Seller"
     },
     {
       title: t.home.beachParadise,
@@ -60,6 +70,7 @@ export default function HomePage() {
       price: t.home.fromPrice.replace('{price}', '$699'),
       highlights: ['Mirissa', 'Unawatuna', t.home.whaleWatching, 'Galle Fort'],
       image: beachImage,
+      tag: "Popular"
     },
     {
       title: t.home.wildlifeAdventure,
@@ -67,6 +78,7 @@ export default function HomePage() {
       price: t.home.fromPrice.replace('{price}', '$799'),
       highlights: [t.home.yalaSafari, 'Minneriya', 'Udawalawe', 'Pinnawala'],
       image: wildlifeImage,
+      tag: "Adventure"
     },
   ];
 
@@ -78,122 +90,172 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden bg-background">
       {/* Hero Carousel */}
       <HeroCarousel />
 
-      {/* Quick Quote Preview - Replaces old section after hero */}
-      <QuickQuotePreview />
+      {/* Quick Quote Floating Section */}
+      <div className="-mt-20 relative z-20 container mx-auto px-4 mb-20">
+        <QuickQuotePreview />
+      </div>
 
-      {/* Destinations Section */}
-      <section className="py-12 sm:py-14 bg-background">
+      {/* Destinations Section - Premium Grid */}
+      <section className="py-12 bg-background relative">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <span className="text-primary font-medium tracking-wide uppercase text-sm">
+          <div className="text-center mb-10 max-w-3xl mx-auto">
+            <span className="text-sunset font-serif italic text-lg tracking-wider">
               {t.home.exploreSriLanka}
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-ocean-dark dark:text-white mt-2 mb-4">
               {t.home.unforgettableDestinations}
             </h2>
-            <p className="text-muted-foreground text-base max-w-2xl mx-auto">
+            <p className="text-muted-foreground dark:text-white/80 text-lg leading-relaxed">
               {t.home.destinationsSubtitle}
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {destinations.map((dest, index) => (
               <Link
                 key={dest.title}
                 href={dest.link}
-                className="group relative h-72 rounded-xl overflow-hidden hover-lift"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="group block"
               >
-                <Image
-                  src={dest.image}
-                  alt={dest.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="text-xl font-bold text-sand mb-1">
-                    {dest.title}
-                  </h3>
-                  <p className="text-sand/80 text-sm">
-                    {dest.description}
-                  </p>
+                <div className="relative h-[400px] w-full overflow-hidden rounded-2xl shadow-soft transition-all duration-700 hover:shadow-strong group-hover:-translate-y-2">
+                  <Image
+                    src={dest.image}
+                    alt={dest.title}
+                    fill
+                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                  />
+                  {/* Premium Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/90 via-ocean-dark/20 to-transparent opacity-80 transition-opacity group-hover:opacity-90" />
+
+                  {/* Content - Slide Up on Hover */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 transition-transform duration-500 group-hover:translate-y-0">
+                    <h3 className="text-2xl font-serif font-bold text-white mb-2">
+                      {dest.title}
+                    </h3>
+                    <p className="text-white/80 text-sm mb-4 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                      {dest.description}
+                    </p>
+                    <div className="flex items-center text-sunset text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
+                      Explore Now <ArrowRight className="w-4 h-4 ml-2" />
+                    </div>
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
 
-          <div className="text-center mt-8">
+          <div className="text-center mt-10">
             <Link href="/destinations">
-              <Button variant="ocean" size="lg" className="group">
+              <Button variant="outline" size="lg" className="rounded-full px-8 hover:bg-ocean hover:text-white transition-colors border-2">
                 {t.home.viewAllDestinations}
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Featured Tours Section */}
-      <section className="py-12 sm:py-14 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <span className="text-primary font-medium tracking-wide uppercase text-sm">
-              {t.home.curatedExperiences}
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mt-2 mb-3">
-              {t.home.popularTourPackages}
-            </h2>
-            <p className="text-muted-foreground text-base max-w-2xl mx-auto">
-              {t.home.toursSubtitle}
-            </p>
+      {/* Featured Tours Section - Glass Cards */}
+      <section className="py-16 bg-muted/30 dark:bg-background relative">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="flex flex-col lg:flex-row justify-between items-end mb-10 gap-6">
+            <div className="max-w-2xl">
+              <span className="text-sunset font-medium tracking-widest uppercase text-sm mb-2 block">
+                {t.home.curatedExperiences}
+              </span>
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-ocean-dark dark:text-white">
+                {t.home.popularTourPackages}
+              </h2>
+              <p className="text-muted-foreground dark:text-white/80 mt-4 text-lg">
+                {t.home.toursSubtitle}
+              </p>
+            </div>
+            <Link href="/tours">
+              <Button variant="ocean" size="lg" className="group rounded-full pl-8 pr-6">
+                {t.home.viewAllTours}
+                <div className="bg-white/20 rounded-full p-1 ml-3 transition-transform group-hover:translate-x-1">
+                  <ArrowRight className="w-4 h-4" />
+                </div>
+              </Button>
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {tours.map((tour, index) => (
               <div
                 key={tour.title}
-                className="bg-card rounded-xl overflow-hidden shadow-card hover-lift group"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="group relative flex flex-col h-full bg-white dark:bg-white/5 rounded-[2rem] shadow-lg dark:shadow-glow hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-black/5 dark:border-white/10 overflow-hidden"
               >
-                <div className="relative h-48 overflow-hidden">
+                {/* Image Section */}
+                <div className="relative h-[280px] w-full overflow-hidden">
                   <Image
                     src={tour.image}
                     alt={tour.title}
                     fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 33vw"
                   />
-                  <div className="absolute top-3 right-3 px-3 py-1 bg-sunset text-ocean-dark text-sm font-semibold rounded-full">
+                  {/* Subtle Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-40" />
+
+                  {/* Glass Badges */}
+                  <div className="absolute top-4 right-4 px-3 py-1.5 bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5" />
                     {tour.duration}
                   </div>
+
+                  {tour.tag && (
+                    <div className="absolute top-4 left-4 px-3 py-1.5 bg-sunset/90 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
+                      {tour.tag}
+                    </div>
+                  )}
+
+                  {/* Rating Badge (New) */}
+                  <div className="absolute bottom-4 left-4 flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/10">
+                    <Star className="w-3 h-3 text-sunglow fill-sunglow" />
+                    <span className="text-white text-xs font-bold">5.0</span>
+                  </div>
                 </div>
-                <div className="p-5">
-                  <h3 className="text-xl font-bold text-card-foreground mb-2">
-                    {tour.title}
-                  </h3>
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {tour.highlights.map((highlight) => (
-                      <span
-                        key={highlight}
-                        className="px-2 py-0.5 text-xs bg-muted text-muted-foreground rounded-full"
-                      >
-                        {highlight}
-                      </span>
+
+                {/* Content Section */}
+                <div className="p-7 flex flex-col flex-grow relative">
+                  <div className="mb-4">
+                    <h3 className="text-2xl font-serif font-bold text-ocean-dark dark:text-white mb-2 group-hover:text-ocean dark:group-hover:text-sunset transition-colors">
+                      {tour.title}
+                    </h3>
+                    <div className="w-12 h-1 bg-gradient-to-r from-sunset to-transparent rounded-full opacity-60 group-hover:w-20 transition-all duration-500" />
+                  </div>
+
+                  <div className="space-y-3 mb-8 flex-grow">
+                    {tour.highlights.slice(0, 3).map((highlight) => (
+                      <div key={highlight} className="flex items-start text-muted-foreground dark:text-white/70 text-sm group/item">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 mr-3 shrink-0 mt-0.5 group-hover/item:text-emerald-400 dark:group-hover/item:text-emerald-400 transition-colors" />
+                        <span className="group-hover/item:text-foreground dark:group-hover/item:text-white transition-colors">{highlight}</span>
+                      </div>
                     ))}
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-primary">
-                      {tour.price}
-                    </span>
+
+                  {/* Divider */}
+                  <div className="h-px w-full bg-gradient-to-r from-transparent via-border dark:via-white/10 to-transparent mb-6 opacity-50" />
+
+                  {/* Bottom Action */}
+                  <div className="flex items-end justify-between mt-auto">
+                    <div>
+                      <span className="block text-[10px] text-muted-foreground dark:text-white/60 uppercase tracking-widest font-semibold mb-1">Starting from</span>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-bold text-ocean-dark dark:text-white group-hover:text-ocean dark:group-hover:text-sunset transition-colors">{tour.price}</span>
+                        <span className="text-xs text-muted-foreground dark:text-white/60 font-medium">/ person</span>
+                      </div>
+                    </div>
                     <Link href="/quote">
-                      <Button variant="oceanOutline" size="sm">
-                        {t.home.getQuote}
+                      <Button className="rounded-full h-10 px-5 bg-ocean/10 dark:bg-white/10 text-ocean dark:text-white hover:text-white hover:bg-gradient-to-r hover:from-ocean hover:to-ocean-dark dark:hover:from-sunset dark:hover:to-sunset-dark border border-ocean/20 dark:border-white/10 transition-all duration-300 shadow-sm hover:shadow-glow group/btn">
+                        <span className="text-sm font-semibold">{t.home.getQuote}</span>
                       </Button>
                     </Link>
                   </div>
@@ -201,59 +263,51 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-
-          <div className="text-center mt-8">
-            <Link href="/tours">
-              <Button variant="gold" size="lg" className="group">
-                {t.home.viewAllTours}
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section className="py-12 sm:py-14 bg-primary">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      {/* Why Choose Us Section - Split Layout */}
+      <section className="py-16 bg-ocean-dark relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <span className="text-sunset font-medium tracking-wide uppercase text-sm">
+              <span className="text-sunset font-medium tracking-wide uppercase text-sm mb-2 block">
                 {t.home.whyVoyagesLanka}
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-sand mt-2 mb-5">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-white mb-6 leading-tight">
                 {t.home.yourJourneyOurExpertise}
               </h2>
-              <p className="text-sand/80 text-base mb-6 leading-relaxed">
+              <p className="text-white/70 text-lg mb-10 leading-relaxed max-w-lg">
                 {t.home.whyChooseUsDesc}
               </p>
 
-              <div className="space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-6">
                 {whyChooseUs.map((item) => (
-                  <div key={item.title} className="flex gap-3">
-                    <div className="w-10 h-10 rounded-full bg-sunset/20 flex items-center justify-center shrink-0">
-                      <Award className="w-5 h-5 text-sunset" />
+                  <div key={item.title} className="flex flex-col gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center border border-white/10 mb-2">
+                      <Award className="w-6 h-6 text-sunset" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-sand">{item.title}</h4>
-                      <p className="text-sand/70 text-sm">{item.desc}</p>
-                    </div>
+                    <h4 className="font-bold text-white text-lg">{item.title}</h4>
+                    <p className="text-white/60 text-sm leading-relaxed">{item.desc}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-8">
+              <div className="mt-12">
                 <Link href="/about">
-                  <Button variant="heroOutline" size="lg" className="group">
+                  <Button variant="hero" size="lg" className="px-10">
                     {t.home.learnMoreAboutUs}
-                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
               </div>
             </div>
 
-            <div className="relative">
-              <div className="relative rounded-xl overflow-hidden shadow-elevated">
+            <div className="relative lg:h-[600px] h-[400px]">
+              {/* Overlapping Images Effect */}
+              <div className="absolute top-0 right-0 w-3/4 h-3/4 rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl z-20">
                 <Image
                   src={trainImage}
                   alt="Scenic train journey in Sri Lanka"
@@ -261,59 +315,53 @@ export default function HomePage() {
                   className="object-cover"
                 />
               </div>
-              {/* Floating Review Card */}
-              <div className="absolute -bottom-6 -left-6 bg-card p-5 rounded-xl shadow-elevated max-w-xs">
+              <div className="absolute bottom-0 left-0 w-2/3 h-2/3 rounded-3xl overflow-hidden border-4 border-white/10 shadow-2xl z-10">
+                <Image
+                  src={wildlifeImage}
+                  alt="Sri Lanka Wildlife"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              {/* Trust Badge Floating */}
+              <div className="absolute bottom-10 right-10 z-30 bg-white/90 backdrop-blur-xl p-6 rounded-2xl shadow-elevated max-w-xs animate-float">
                 <div className="flex gap-1 mb-2">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 text-sunset fill-sunset" />
                   ))}
                 </div>
-                <p className="text-card-foreground font-medium text-sm mb-1">
+                <p className="font-serif italic text-ocean-dark font-medium text-lg mb-2">
                   "{t.home.testimonialQuote}"
                 </p>
-                <p className="text-muted-foreground text-xs">
-                  — {t.home.testimonialAuthor}
-                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-ocean text-white flex items-center justify-center text-xs font-bold">
+                    JD
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-ocean-dark">{t.home.testimonialAuthor}</p>
+                    <p className="text-xs text-muted-foreground">Verified Traveler</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Stats Section */}
+      <StatsSection />
+
       {/* Testimonials Section */}
       <TestimonialsSection />
 
-      {/* Stats Section - Moved after testimonials */}
-      <StatsSection />
+      {/* FAQ Section */}
+      <FAQSection />
 
       {/* Instagram Feed */}
       <InstagramFeed />
 
       {/* Newsletter Section */}
       <NewsletterSection />
-
-      {/* CTA Section */}
-      <section className="py-12 sm:py-14 bg-background relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--primary))_0%,transparent_70%)]" />
-        </div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-5">
-              {t.home.readyToExplore}
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              {t.home.ctaSubtitle}
-            </p>
-            <Link href="/quote">
-              <Button variant="hero" size="xl" className="group">
-                {t.home.requestFreeQuote}
-                <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

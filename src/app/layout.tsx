@@ -1,28 +1,32 @@
 import type { Metadata } from "next";
-import { Raleway } from "next/font/google";
+import { Playfair_Display, Outfit } from "next/font/google"; // Premium fonts
 import "@/index.css";
 import Layout from "@/components/layout/Layout";
 import { Providers } from "./providers";
 
-/* ✅ Correct Google Font setup */
-const raleway = Raleway({
+const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  variable: "--font-playfair",
   display: "swap",
-  variable: "--font-raleway",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Dream Lanka Travels | Premium Sri Lanka Tours & Travel Experiences",
+  title: "Dream Lanka Travels | Luxury Sri Lanka Tours & Experiences",
   description:
-    "Discover Sri Lanka with Dream Lanka Travels - Your trusted tour operator for cultural heritage, wildlife safaris, beach holidays, and adventure tours.",
+    "Experience the finest of Sri Lanka with Dream Lanka Travels. Bespoke luxury tours, private villas, and exclusive experiences tailored for the discerning traveler.",
   keywords:
-    "Sri Lanka tours, Sri Lanka travel, Ceylon tours, Sigiriya, Kandy, Yala safari, Sri Lanka beach, Sri Lanka honeymoon, Sri Lanka wildlife",
+    "Luxury Sri Lanka tours, 5-star travel Sri Lanka, private tours, boutique hotels, Dream Lanka Travels, premium holidays",
   authors: [{ name: "Dream Lanka Travels" }],
   openGraph: {
-    title: "Dream Lanka Travels | Premium Sri Lanka Tours",
+    title: "Dream Lanka Travels | Luxury Sri Lanka Tours",
     description:
-      "Discover the Pearl of the Indian Ocean with our expertly crafted tours.",
+      "Experience the finest of Sri Lanka with Dream Lanka Travels. Bespoke luxury tours and exclusive experiences.",
     type: "website",
     url: "https://voyageslanka.com",
     images: [
@@ -32,9 +36,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     site: "@VoyagesLanka",
-    title: "Dream Lanka Travels | Premium Sri Lanka Tours",
+    title: "Dream Lanka Travels | Luxury Sri Lanka Tours",
     description:
-      "Discover the Pearl of the Indian Ocean with our expertly crafted tours.",
+      "Experience the finest of Sri Lanka with Dream Lanka Travels. Bespoke luxury tours and exclusive experiences.",
     images: ["https://lovable.dev/opengraph-image-p98pqg.png"],
   },
 };
@@ -45,8 +49,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={raleway.variable}>
-      <body className="font-raleway">
+    <html lang="en" className={`${playfair.variable} ${outfit.variable} scroll-smooth`}>
+      <body className="font-sans antialiased bg-background text-foreground selection:bg-gold/30 selection:text-foreground">
         <Providers>
           <Layout>{children}</Layout>
         </Providers>

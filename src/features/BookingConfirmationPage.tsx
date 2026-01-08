@@ -11,7 +11,7 @@ export default function BookingConfirmationPage() {
   const bookingRef = searchParams.get('ref') || 'VL-PENDING';
 
   return (
-    <div className="min-h-screen pt-20 bg-muted/30">
+    <div className="min-h-screen pt-20 bg-muted/30 dark:bg-background">
       <MetaTags
         title="Booking Confirmed"
         description="Your tour booking has been received. Our team will contact you within 24 hours."
@@ -20,7 +20,7 @@ export default function BookingConfirmationPage() {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-2xl mx-auto text-center">
           {/* Success Icon */}
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
 
@@ -35,7 +35,7 @@ export default function BookingConfirmationPage() {
           </p>
 
           {/* Booking Reference */}
-          <div className="bg-card p-6 rounded-xl shadow-sm border border-border mb-8">
+          <div className="bg-card dark:bg-white/5 p-6 rounded-xl shadow-sm dark:shadow-glow border border-border dark:border-white/10 mb-8">
             <p className="text-sm text-muted-foreground mb-2">Your Booking Reference</p>
             <p className="font-mono text-2xl font-bold text-sunset">{bookingRef}</p>
             <p className="text-xs text-muted-foreground mt-2">
@@ -44,7 +44,7 @@ export default function BookingConfirmationPage() {
           </div>
 
           {/* What's Next */}
-          <div className="bg-card p-6 rounded-xl shadow-sm border border-border mb-8 text-left">
+          <div className="bg-card dark:bg-white/5 p-6 rounded-xl shadow-sm dark:shadow-glow border border-border dark:border-white/10 mb-8 text-left">
             <h2 className="font-semibold text-lg mb-4">What Happens Next?</h2>
             <div className="space-y-4">
               <div className="flex gap-4">

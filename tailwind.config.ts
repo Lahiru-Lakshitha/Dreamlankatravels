@@ -23,34 +23,19 @@ const config = {
       ======================= */
       fontFamily: {
         sans: [
-          "var(--font-raleway)",
+          "var(--font-outfit)",
           "ui-sans-serif",
           "system-ui",
           "sans-serif",
-          "Apple Color Emoji",
-          "Segoe UI Emoji",
-          "Segoe UI Symbol",
-          "Noto Color Emoji",
         ],
         serif: [
-          "var(--font-raleway)",
+          "var(--font-playfair)",
+          "var(--font-lora)",
           "ui-serif",
           "Georgia",
-          "Cambria",
-          "Times New Roman",
-          "Times",
           "serif",
         ],
-        mono: [
-          "ui-monospace",
-          "SFMono-Regular",
-          "Menlo",
-          "Monaco",
-          "Consolas",
-          "Liberation Mono",
-          "Courier New",
-          "monospace",
-        ],
+        heading: ["var(--font-playfair)", "serif"],
       },
 
       /* =======================
@@ -66,6 +51,8 @@ const config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          hover: "hsl(var(--primary-hover))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -92,6 +79,7 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
 
+        // Premium Travel Palette
         ocean: {
           DEFAULT: "hsl(var(--ocean))",
           light: "hsl(var(--ocean-light))",
@@ -108,16 +96,10 @@ const config = {
         },
         palm: "hsl(var(--palm))",
         coral: "hsl(var(--coral))",
-
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
+        gold: {
+          DEFAULT: "#D4AF37",
+          light: "#F4DF4E",
+          dark: "#AA8C2C",
         },
       },
 
@@ -128,6 +110,7 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        pill: "9999px",
       },
 
       /* =======================
@@ -161,6 +144,10 @@ const config = {
           "0%": { transform: "scale(0.97)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        "width-expand": {
+          "0%": { width: "0%" },
+          "100%": { width: "100%" },
+        }
       },
 
       animation: {
@@ -181,6 +168,10 @@ const config = {
         lg: "var(--shadow-lg)",
         xl: "var(--shadow-xl)",
         "2xl": "var(--shadow-2xl)",
+        soft: "var(--shadow-soft)",
+        strong: "var(--shadow-strong)",
+        glow: "var(--shadow-glow)",
+        elevated: "var(--shadow-strong)",
       },
     },
   },

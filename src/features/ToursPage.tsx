@@ -302,7 +302,7 @@ export default function ToursPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-20 bg-ocean-dark">
+      <section className="py-16 sm:py-20 bg-ocean-dark dark:bg-black/40 border-t border-transparent dark:border-white/5">
         <div className="container mx-auto px-4 text-center">
           <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-sand mb-4">
             Can't Find What You're Looking For?

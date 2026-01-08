@@ -13,7 +13,7 @@ export function NewsletterSection() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email) return;
 
     setIsSubmitting(true);
@@ -73,7 +73,7 @@ export function NewsletterSection() {
   }
 
   return (
-    <section className="py-16 bg-ocean-dark">
+    <section className="py-16 bg-ocean-dark dark:bg-black/40 border-t border-transparent dark:border-white/5">
       <div className="container mx-auto px-4">
         <div className="max-w-xl mx-auto text-center">
           <h3 className="font-serif text-2xl md:text-3xl font-bold text-sand mb-4">
@@ -92,8 +92,8 @@ export function NewsletterSection() {
               className="flex-1 bg-sand/10 border-sand/20 text-sand placeholder:text-sand/50 focus:border-sunset"
               required
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               variant="hero"
               disabled={isSubmitting}
               className="shrink-0"

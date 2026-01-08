@@ -169,7 +169,7 @@ const TestimonialCard = ({
 
   return (
     <div
-      className="flex-shrink-0 w-[320px] sm:w-[360px] p-6 rounded-2xl bg-card border border-border/50 shadow-card hover-lift group"
+      className="flex-shrink-0 w-[320px] sm:w-[360px] p-6 rounded-2xl bg-card dark:bg-white/5 border border-border/50 dark:border-white/10 shadow-card hover-lift group"
       style={{ touchAction: 'pan-y' }}
     >
       {/* Header */}
@@ -177,8 +177,8 @@ const TestimonialCard = ({
         <div className="flex items-center gap-3">
           {/* Avatar */}
           <div className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-semibold ${isTripAdvisor
-              ? 'bg-[#00AF87]/10 text-[#00AF87]'
-              : 'bg-[#4285F4]/10 text-[#4285F4]'
+            ? 'bg-[#00AF87]/10 text-[#00AF87]'
+            : 'bg-[#4285F4]/10 text-[#4285F4]'
             }`}>
             {review.reviewer_name.charAt(0).toUpperCase()}
           </div>
@@ -214,10 +214,10 @@ const TestimonialCard = ({
           <Star
             key={i}
             className={`w-4 h-4 ${i < review.rating
-                ? isTripAdvisor
-                  ? 'text-[#00AF87] fill-[#00AF87]'
-                  : 'text-[#FBBC05] fill-[#FBBC05]'
-                : 'text-muted-foreground/30'
+              ? isTripAdvisor
+                ? 'text-[#00AF87] fill-[#00AF87]'
+                : 'text-[#FBBC05] fill-[#FBBC05]'
+              : 'text-muted-foreground/30'
               }`}
           />
         ))}

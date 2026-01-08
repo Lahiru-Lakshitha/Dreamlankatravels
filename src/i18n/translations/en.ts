@@ -21,7 +21,7 @@ export const en = {
     heroTitle: 'Discover the Pearl of the',
     heroHighlight: 'Indian Ocean',
     heroSubtitle: 'Unforgettable journeys through ancient temples, pristine beaches, lush tea plantations, and incredible wildlife.',
-    planYourJourney: 'Plan Your Journey',
+    planYourJourney: 'Plan Trip',
     exploreTours: 'Explore Tours',
     happyTravelers: 'Happy Travelers',
     destinationsCount: 'Destinations',

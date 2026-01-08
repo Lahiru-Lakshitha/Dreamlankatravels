@@ -518,30 +518,30 @@ export default function TourDetailPage() {
                   {/* Tour Info Grid */}
                   <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
                     {tour.difficulty_level && (
-                      <div className="bg-muted/50 p-4 rounded-lg text-center">
+                      <div className="bg-muted/50 dark:bg-white/5 p-4 rounded-lg text-center border border-transparent dark:border-white/5">
                         <Mountain className="w-6 h-6 mx-auto mb-2 text-sunset" />
                         <p className="text-sm text-muted-foreground">Difficulty</p>
-                        <p className="font-semibold capitalize">{tour.difficulty_level}</p>
+                        <p className="font-semibold capitalize text-foreground dark:text-white">{tour.difficulty_level}</p>
                       </div>
                     )}
                     {tour.min_age !== null && (
-                      <div className="bg-muted/50 p-4 rounded-lg text-center">
+                      <div className="bg-muted/50 dark:bg-white/5 p-4 rounded-lg text-center border border-transparent dark:border-white/5">
                         <Users className="w-6 h-6 mx-auto mb-2 text-sunset" />
                         <p className="text-sm text-muted-foreground">Min Age</p>
-                        <p className="font-semibold">{tour.min_age}+ years</p>
+                        <p className="font-semibold text-foreground dark:text-white">{tour.min_age}+ years</p>
                       </div>
                     )}
                     {tour.languages && tour.languages.length > 0 && (
-                      <div className="bg-muted/50 p-4 rounded-lg text-center">
+                      <div className="bg-muted/50 dark:bg-white/5 p-4 rounded-lg text-center border border-transparent dark:border-white/5">
                         <Languages className="w-6 h-6 mx-auto mb-2 text-sunset" />
                         <p className="text-sm text-muted-foreground">Languages</p>
-                        <p className="font-semibold">{tour.languages.length} available</p>
+                        <p className="font-semibold text-foreground dark:text-white">{tour.languages.length} available</p>
                       </div>
                     )}
-                    <div className="bg-muted/50 p-4 rounded-lg text-center">
+                    <div className="bg-muted/50 dark:bg-white/5 p-4 rounded-lg text-center border border-transparent dark:border-white/5">
                       <Globe className="w-6 h-6 mx-auto mb-2 text-sunset" />
                       <p className="text-sm text-muted-foreground">Type</p>
-                      <p className="font-semibold capitalize">{tour.tour_type || 'Cultural'}</p>
+                      <p className="font-semibold capitalize text-foreground dark:text-white">{tour.tour_type || 'Cultural'}</p>
                     </div>
                   </div>
 
@@ -680,6 +680,7 @@ export default function TourDetailPage() {
             {/* Right Column - Booking Card */}
             <div className="lg:col-span-1">
               <div className="sticky top-24">
+                {/* Booking Card Content */}
                 {showBookingForm ? (
                   <BookingForm
                     tour={{
@@ -694,7 +695,7 @@ export default function TourDetailPage() {
                     }}
                   />
                 ) : (
-                  <div className="bg-card p-6 rounded-xl shadow-lg border border-border">
+                  <div className="bg-card dark:bg-white/5 p-6 rounded-xl shadow-lg dark:shadow-glow border border-border dark:border-white/10 transition-all duration-300">
                     <div className="text-center mb-6">
                       <p className="text-muted-foreground text-sm">From</p>
                       <p className="font-serif text-4xl font-bold text-sunset">
@@ -718,7 +719,7 @@ export default function TourDetailPage() {
                       </Button>
                     </Link>
 
-                    <div className="mt-6 pt-6 border-t border-border space-y-3 text-sm">
+                    <div className="mt-6 pt-6 border-t border-border dark:border-white/10 space-y-3 text-sm">
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Check className="w-4 h-4 text-green-600" />
                         Free cancellation up to 14 days before
@@ -734,7 +735,7 @@ export default function TourDetailPage() {
                     </div>
 
                     {/* FAQ Preview */}
-                    <FAQPreview className="mt-4 pt-4 border-t border-border" />
+                    <FAQPreview className="mt-4 pt-4 border-t border-border dark:border-white/10" />
                   </div>
                 )}
               </div>

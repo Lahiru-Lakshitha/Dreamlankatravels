@@ -85,7 +85,10 @@ export default function FAQPage() {
     const matchesSearch = searchQuery === '' ||
       faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = activeCategory === null || faq.category === activeCategory;
+
+    // If searching, ignore category filter (search across all)
+    const matchesCategory = searchQuery !== '' ? true : (activeCategory === null || faq.category === activeCategory);
+
     return matchesSearch && matchesCategory;
   });
 
@@ -122,30 +125,40 @@ export default function FAQPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* Hero Section */}
-      <section className="py-12 bg-ocean-gradient text-sand">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <HelpCircle className="w-6 h-6 text-sunset" />
-            <span className="text-sunset font-medium">Help Center</span>
+      {/* Hero Section - Premium Redesign */}
+      <section className="relative py-20 overflow-hidden">
+        {/* Background with Gradient and Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-br from-ocean-dark via-primary to-ocean z-0"></div>
+        <div className="absolute inset-0 bg-[url('/patterns/grid.svg')] opacity-10 z-0"></div>
+
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="inline-flex items-center justify-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/10">
+            <HelpCircle className="w-5 h-5 text-sunset" />
+            <span className="text-sunset font-medium text-sm tracking-wide uppercase">Help Center</span>
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mb-4">
+
+          <h1 className="font-serif text-4xl md:text-6xl font-bold mb-6 text-white drop-shadow-sm">
             Frequently Asked Questions
           </h1>
-          <p className="text-sand/80 text-lg max-w-2xl mx-auto mb-8">
-            Find answers to common questions about booking, tours, visas, and more
+
+          <p className="text-sand/90 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-sans leading-relaxed">
+            Everything you need to know about your journey with Dream Lanka Travels.
+            Can't find the answer? We're here to help.
           </p>
 
-          {/* Search Bar */}
-          <div className="max-w-xl mx-auto relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search FAQs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-14 text-lg bg-background/10 border-sand/30 text-sand placeholder:text-sand/50 focus:bg-background/20"
-            />
+          {/* Search Bar - Premium/Glass */}
+          <div className="max-w-2xl mx-auto relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-sunset to-primary rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+            <div className="relative">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground dark:text-white/60 pointer-events-none" />
+              <Input
+                type="text"
+                placeholder="Search for answers..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-14 h-16 text-lg bg-white/95 dark:bg-white/10 backdrop-blur-xl border-white/20 dark:border-white/10 text-ocean-dark dark:text-white placeholder:text-muted-foreground/70 dark:placeholder:text-white/60 rounded-xl shadow-2xl focus:ring-2 focus:ring-sunset/50"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -178,14 +191,44 @@ export default function FAQPage() {
         ) : filteredFAQs.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg mb-4">
-              No FAQs found matching your search.
+              No FAQs found matching &quot;{searchQuery}&quot;.
             </p>
             <Button variant="outline" onClick={() => { setSearchQuery(''); setActiveCategory(null); }}>
-              Clear Filters
+              Clear Search
             </Button>
           </div>
+        ) : searchQuery !== '' ? (
+          // Search Mode: Show flat list of all matching questions
+          <div className="max-w-3xl mx-auto">
+            <div className="mb-6 flex justify-between items-center">
+              <h3 className="text-xl font-semibold text-foreground">
+                Found {filteredFAQs.length} result{filteredFAQs.length !== 1 ? 's' : ''}
+              </h3>
+              <Button variant="ghost" size="sm" onClick={() => setSearchQuery('')} className="text-muted-foreground">
+                Clear Search
+              </Button>
+            </div>
+            <Accordion type="single" collapsible className="space-y-3">
+              {filteredFAQs.map(faq => (
+                <AccordionItem
+                  key={faq.id}
+                  value={faq.id}
+                  className="bg-card dark:bg-white/5 rounded-2xl border border-border/50 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+                >
+                  <AccordionTrigger className="hover:no-underline text-left px-6 py-5 data-[state=open]:bg-muted/30 dark:data-[state=open]:bg-white/5">
+                    <span className="font-sans font-semibold text-lg text-foreground pr-4">
+                      {faq.question}
+                    </span>
+                  </AccordionTrigger>
+                  <AccordionContent className="font-sans text-muted-foreground text-base leading-relaxed px-6 pb-6 pt-2">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
         ) : activeCategory === null ? (
-          // Show grouped by category
+          // Default Mode: Grouped by category
           <div className="max-w-3xl mx-auto space-y-10">
             {groupedFAQs.map(category => (
               <div key={category.id}>
@@ -198,14 +241,14 @@ export default function FAQPage() {
                     <AccordionItem
                       key={faq.id}
                       value={faq.id}
-                      className="bg-card rounded-xl border border-border px-4"
+                      className="bg-card rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden mb-3"
                     >
-                      <AccordionTrigger className="hover:no-underline text-left py-4">
-                        <span className="font-medium text-card-foreground pr-4">
+                      <AccordionTrigger className="hover:no-underline text-left px-6 py-5 data-[state=open]:bg-muted/30">
+                        <span className="font-sans font-semibold text-lg text-foreground pr-4">
                           {faq.question}
                         </span>
                       </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground pb-4">
+                      <AccordionContent className="font-sans text-muted-foreground text-base leading-relaxed px-6 pb-6 pt-2">
                         {faq.answer}
                       </AccordionContent>
                     </AccordionItem>
@@ -222,14 +265,14 @@ export default function FAQPage() {
                 <AccordionItem
                   key={faq.id}
                   value={faq.id}
-                  className="bg-card rounded-xl border border-border px-4"
+                  className="bg-card rounded-2xl border border-border/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden mb-3"
                 >
-                  <AccordionTrigger className="hover:no-underline text-left py-4">
-                    <span className="font-medium text-card-foreground pr-4">
+                  <AccordionTrigger className="hover:no-underline text-left px-6 py-5 data-[state=open]:bg-muted/30">
+                    <span className="font-sans font-semibold text-lg text-foreground pr-4">
                       {faq.question}
                     </span>
                   </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground pb-4">
+                  <AccordionContent className="font-sans text-muted-foreground text-base leading-relaxed px-6 pb-6 pt-2">
                     {faq.answer}
                   </AccordionContent>
                 </AccordionItem>
@@ -239,7 +282,7 @@ export default function FAQPage() {
         )}
 
         {/* Still have questions CTA */}
-        <div className="mt-16 text-center bg-muted/50 rounded-2xl p-8 max-w-2xl mx-auto">
+        <div className="mt-16 text-center bg-muted/50 dark:bg-white/5 rounded-2xl p-8 max-w-2xl mx-auto">
           <MessageCircle className="w-12 h-12 mx-auto text-sunset mb-4" />
           <h3 className="font-serif text-2xl font-bold mb-2">Still have questions?</h3>
           <p className="text-muted-foreground mb-6">
