@@ -341,31 +341,7 @@ export function HeroCarousel() {
         </button>
       </div>
 
-      {/* Premium Dots Navigation with Progress */}
-      <div className="absolute bottom-28 sm:bottom-32 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-sm border border-white/5">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            disabled={isTransitioning}
-            className={`relative h-1.5 rounded-full transition-all duration-500 disabled:cursor-not-allowed overflow-hidden ${index === currentSlide
-              ? 'w-6 sm:w-8 bg-white/30'
-              : 'w-1.5 bg-white/30 hover:bg-white/50'
-              }`}
-            aria-label={`Go to slide ${index + 1}`}
-          >
-            {/* Progress indicator for active slide */}
-            {index === currentSlide && !isPaused && !prefersReducedMotion && (
-              <span
-                className="absolute inset-0 rounded-full bg-sunset origin-left animate-progress"
-              />
-            )}
-            {index === currentSlide && (isPaused || prefersReducedMotion) && (
-              <span className="absolute inset-0 rounded-full bg-sunset" />
-            )}
-          </button>
-        ))}
-      </div>
+
 
       {/* CSS for animations */}
       <style>{`
