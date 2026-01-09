@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { Star } from 'lucide-react';
+import { format, parse } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
@@ -30,7 +32,7 @@ export function ReviewForm({ tourId, onSuccess }: ReviewFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (rating === 0) {
       toast({
         title: 'Rating required',
@@ -106,12 +108,11 @@ export function ReviewForm({ tourId, onSuccess }: ReviewFormProps) {
               onClick={() => setRating(star)}
               className="focus:outline-none transition-transform hover:scale-110"
             >
-              <Star 
-                className={`w-8 h-8 ${
-                  star <= (hoveredRating || rating)
+              <Star
+                className={`w-8 h-8 ${star <= (hoveredRating || rating)
                     ? 'text-sunset fill-sunset'
                     : 'text-muted-foreground'
-                }`}
+                  }`}
               />
             </button>
           ))}
@@ -156,12 +157,12 @@ export function ReviewForm({ tourId, onSuccess }: ReviewFormProps) {
 
         {/* Travel Date */}
         <div>
-          <Label htmlFor="travel_date">Travel Date (optional)</Label>
-          <Input
-            id="travel_date"
-            type="date"
-            value={formData.travel_date}
-            onChange={(e) => setFormData(prev => ({ ...prev, travel_date: e.target.value }))}
+          <Label htmlFor="travel_date" className="block mb-2">Travel Date (optional)</Label>
+          <DatePicker
+            date={formData.travel_date ? parse(formData.travel_date, 'yyyy-MM-dd', new Date()) : undefined}
+            setDate={(date) => setFormData(prev => ({ ...prev, travel_date: date ? format(date, 'yyyy-MM-dd') : '' }))}
+            placeholder="Select date"
+            maxDate={new Date()} // Can't review future travel
           />
         </div>
       </div>

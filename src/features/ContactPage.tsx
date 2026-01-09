@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { MetaTags } from '@/components/seo/MetaTags';
 import { PageHeroStrip } from '@/components/layout/PageHeroStrip';
+import { submitContactForm } from '@/app/actions/forms';
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters').max(100),
@@ -56,12 +57,44 @@ export default function ContactPage() {
     resolver: zodResolver(contactSchema),
   });
 
+  // ... (keep existing imports)
+
+  // ...
+
   const onSubmit = async (data: ContactFormData) => {
-    console.log('Contact form:', data);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setIsSubmitted(true);
-    reset();
-    setTimeout(() => setIsSubmitted(false), 5000);
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("subject", data.subject);
+    formData.append("message", data.message);
+
+    try {
+      const result = await submitContactForm(formData);
+
+      if (result.error) {
+        // Handle Zod flattened errors or string error
+        const errorMsg = typeof result.error === 'string'
+          ? result.error
+          : "Please check your inputs";
+
+        // If field errors, we could map them, but for now generic toast
+        console.error(result.error);
+        throw new Error(errorMsg);
+      }
+
+      setIsSubmitted(true);
+      reset();
+      setTimeout(() => setIsSubmitted(false), 5000);
+    } catch (error) {
+      console.error("Contact submit error:", error);
+      // Toast is not imported here?
+      // Ah, I don't see useToast usage in the original code, it just sets isSubmitted.
+      // Let's add simple alert or just console for now if no toast hook.
+      // Wait, original imports show `useToast`? No.
+      // Original code doesn't use toast. It just sets isSubmitted.
+      // Use native alert or just rely on console for errors if no toast.
+      alert("Something went wrong. Please try again.");
+    }
   };
 
   return (

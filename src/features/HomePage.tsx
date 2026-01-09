@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Star, Award, CheckCircle2, Clock } from 'lucide-react';
+import { ArrowRight, Star, Award } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { HeroCarousel } from '@/components/home/HeroCarousel';
@@ -12,7 +12,8 @@ import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 import { NewsletterSection } from '@/components/home/NewsletterSection';
 import { InstagramFeed } from '@/components/home/InstagramFeed';
 import { FAQSection } from '@/components/home/FAQSection';
-import { GlassCard } from '@/components/ui/glass-card';
+import { TourCard } from '@/components/tours/TourCard';
+import { useTours } from '@/hooks/useTours';
 
 // Images
 import beachImage from '@/assets/destination-beach.jpg';
@@ -55,32 +56,7 @@ export default function HomePage() {
     },
   ];
 
-  const tours = [
-    {
-      title: t.home.culturalTriangle,
-      duration: t.home.sevenDays,
-      price: t.home.fromPrice.replace('{price}', '$899'),
-      highlights: ['Sigiriya', 'Kandy', 'Dambulla', 'Polonnaruwa'],
-      image: templeImage,
-      tag: "Best Seller"
-    },
-    {
-      title: t.home.beachParadise,
-      duration: t.home.fiveDays,
-      price: t.home.fromPrice.replace('{price}', '$699'),
-      highlights: ['Mirissa', 'Unawatuna', t.home.whaleWatching, 'Galle Fort'],
-      image: beachImage,
-      tag: "Popular"
-    },
-    {
-      title: t.home.wildlifeAdventure,
-      duration: t.home.sixDays,
-      price: t.home.fromPrice.replace('{price}', '$799'),
-      highlights: [t.home.yalaSafari, 'Minneriya', 'Udawalawe', 'Pinnawala'],
-      image: wildlifeImage,
-      tag: "Adventure"
-    },
-  ];
+  const { tours } = useTours();
 
   const whyChooseUs = [
     { title: t.home.localExpertGuides, desc: t.home.localExpertGuidesDesc },
@@ -159,8 +135,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Tours Section - Glass Cards */}
-      <section className="py-16 bg-muted/30 dark:bg-background relative">
+      {/* Featured Tours Section - Unified with Tours Page */}
+      <section className="py-16 sm:py-24 bg-muted/30 dark:bg-background relative">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
 
         <div className="container mx-auto px-4 relative z-10">
@@ -170,15 +146,15 @@ export default function HomePage() {
                 {t.home.curatedExperiences}
               </span>
               <h2 className="text-4xl md:text-5xl font-serif font-bold text-ocean-dark dark:text-white">
-                {t.home.popularTourPackages}
+                Featured Tours in Sri Lanka
               </h2>
               <p className="text-muted-foreground dark:text-white/80 mt-4 text-lg">
-                {t.home.toursSubtitle}
+                Explore our most popular handcrafted Sri Lanka tour packages.
               </p>
             </div>
             <Link href="/tours">
               <Button variant="ocean" size="lg" className="group rounded-full pl-8 pr-6">
-                {t.home.viewAllTours}
+                View All Tours
                 <div className="bg-white/20 rounded-full p-1 ml-3 transition-transform group-hover:translate-x-1">
                   <ArrowRight className="w-4 h-4" />
                 </div>
@@ -186,81 +162,9 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {tours.map((tour, index) => (
-              <div
-                key={tour.title}
-                className="group relative flex flex-col h-full bg-white dark:bg-white/5 rounded-[2rem] shadow-lg dark:shadow-glow hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-black/5 dark:border-white/10 overflow-hidden"
-              >
-                {/* Image Section */}
-                <div className="relative h-[280px] w-full overflow-hidden">
-                  <Image
-                    src={tour.image}
-                    alt={tour.title}
-                    fill
-                    className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                  />
-                  {/* Subtle Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-40" />
-
-                  {/* Glass Badges */}
-                  <div className="absolute top-4 right-4 px-3 py-1.5 bg-white/20 backdrop-blur-md border border-white/30 text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
-                    {tour.duration}
-                  </div>
-
-                  {tour.tag && (
-                    <div className="absolute top-4 left-4 px-3 py-1.5 bg-sunset/90 backdrop-blur-sm text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-lg border border-white/20">
-                      {tour.tag}
-                    </div>
-                  )}
-
-                  {/* Rating Badge (New) */}
-                  <div className="absolute bottom-4 left-4 flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-sm border border-white/10">
-                    <Star className="w-3 h-3 text-sunglow fill-sunglow" />
-                    <span className="text-white text-xs font-bold">5.0</span>
-                  </div>
-                </div>
-
-                {/* Content Section */}
-                <div className="p-7 flex flex-col flex-grow relative">
-                  <div className="mb-4">
-                    <h3 className="text-2xl font-serif font-bold text-ocean-dark dark:text-white mb-2 group-hover:text-ocean dark:group-hover:text-sunset transition-colors">
-                      {tour.title}
-                    </h3>
-                    <div className="w-12 h-1 bg-gradient-to-r from-sunset to-transparent rounded-full opacity-60 group-hover:w-20 transition-all duration-500" />
-                  </div>
-
-                  <div className="space-y-3 mb-8 flex-grow">
-                    {tour.highlights.slice(0, 3).map((highlight) => (
-                      <div key={highlight} className="flex items-start text-muted-foreground dark:text-white/70 text-sm group/item">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 mr-3 shrink-0 mt-0.5 group-hover/item:text-emerald-400 dark:group-hover/item:text-emerald-400 transition-colors" />
-                        <span className="group-hover/item:text-foreground dark:group-hover/item:text-white transition-colors">{highlight}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Divider */}
-                  <div className="h-px w-full bg-gradient-to-r from-transparent via-border dark:via-white/10 to-transparent mb-6 opacity-50" />
-
-                  {/* Bottom Action */}
-                  <div className="flex items-end justify-between mt-auto">
-                    <div>
-                      <span className="block text-[10px] text-muted-foreground dark:text-white/60 uppercase tracking-widest font-semibold mb-1">Starting from</span>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-bold text-ocean-dark dark:text-white group-hover:text-ocean dark:group-hover:text-sunset transition-colors">{tour.price}</span>
-                        <span className="text-xs text-muted-foreground dark:text-white/60 font-medium">/ person</span>
-                      </div>
-                    </div>
-                    <Link href="/quote">
-                      <Button className="rounded-full h-10 px-5 bg-ocean/10 dark:bg-white/10 text-ocean dark:text-white hover:text-white hover:bg-gradient-to-r hover:from-ocean hover:to-ocean-dark dark:hover:from-sunset dark:hover:to-sunset-dark border border-ocean/20 dark:border-white/10 transition-all duration-300 shadow-sm hover:shadow-glow group/btn">
-                        <span className="text-sm font-semibold">{t.home.getQuote}</span>
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {tours.slice(0, 3).map((tour) => (
+              <TourCard key={tour.id} tour={tour} />
             ))}
           </div>
         </div>

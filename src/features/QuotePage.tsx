@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { format, parse } from 'date-fns';
+import { DatePicker } from '@/components/ui/date-picker';
 
 import { useSearchParams } from 'next/navigation';
 import {
@@ -28,6 +30,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { MetaTags } from '@/components/seo/MetaTags';
 import { PageHeroStrip } from '@/components/layout/PageHeroStrip';
+import { submitQuoteRequest } from '@/app/actions/forms';
 
 const quoteSchema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters').max(100),
@@ -80,7 +83,9 @@ export default function QuotePage() {
 
   const {
     register,
+    control,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
     setValue,
     reset,
@@ -110,11 +115,21 @@ export default function QuotePage() {
     const departure = searchParams.get('departure');
     const travelers = searchParams.get('travelers');
     const style = searchParams.get('style');
+    const tourName = searchParams.get('tourName');
+    const tourId = searchParams.get('tourId');
+    const duration = searchParams.get('duration');
+    const tourDestinations = searchParams.get('destinations');
 
     if (arrival) setValue('startDate', arrival);
     if (departure) setValue('endDate', departure);
     if (travelers) setValue('travelers', travelers);
     if (style) setValue('tourType', style);
+
+    // Pre-fill tour details into special requests if provided
+    if (tourName) {
+      const tourDetails = `I am interested in a custom quote for the tour: "${tourName}"${duration ? ` (${duration})` : ''}.${tourDestinations ? `\n\nDestinations: ${tourDestinations}` : ''}${tourId ? `\n(Tour ID: ${tourId})` : ''}`;
+      setValue('specialRequests', tourDetails);
+    }
   }, [profile, user, setValue, searchParams]);
 
   const toggleDestination = (dest: string) => {
@@ -126,36 +141,46 @@ export default function QuotePage() {
   };
 
   const onSubmit = async (data: QuoteFormData) => {
-    const { error } = await supabase.from('quotes').insert([
-      {
-        user_id: user?.id || null,
-        full_name: data.fullName,
-        email: data.email,
-        phone: data.phone,
-        country: data.country,
-        travel_start_date: data.startDate,
-        travel_end_date: data.endDate,
-        travelers: parseInt(data.travelers) || 1,
-        budget_range: data.budget,
-        tour_type: data.tourType,
-        destinations: selectedDestinations.length > 0 ? selectedDestinations : null,
-        special_requests: data.specialRequests || null,
-        status: 'pending' as const,
-      },
-    ]);
+    const formData = new FormData();
+    formData.append("fullName", data.fullName);
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    formData.append("country", data.country);
+    formData.append("startDate", data.startDate);
+    formData.append("endDate", data.endDate);
+    formData.append("travelers", data.travelers); // string in form
+    formData.append("budget", data.budget);
+    formData.append("tourType", data.tourType);
+    if (data.specialRequests) formData.append("specialRequests", data.specialRequests);
 
-    if (error) {
+    if (selectedDestinations.length > 0) {
+      formData.append("destinations", JSON.stringify(selectedDestinations));
+    }
+
+    try {
+      const result = await submitQuoteRequest(formData);
+
+      if (result.error) {
+        toast({
+          title: t.common.error,
+          description: typeof result.error === 'string' ? result.error : t.quote.submitError,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: t.quote.submitSuccess,
+          description: t.quote.submitSuccessDesc,
+        });
+        setIsSubmitted(true);
+        setSelectedDestinations([]); // Clear state
+        reset(); // Reset form
+      }
+    } catch (error) {
       toast({
         title: t.common.error,
         description: t.quote.submitError,
         variant: 'destructive',
       });
-    } else {
-      toast({
-        title: t.quote.submitSuccess,
-        description: t.quote.submitSuccessDesc,
-      });
-      setIsSubmitted(true);
     }
   };
 
@@ -339,15 +364,19 @@ export default function QuotePage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                   <div className="space-y-2">
                     <Label htmlFor="startDate" className="text-sm font-medium">{t.quote.startDate} *</Label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                      <Input
-                        id="startDate"
-                        type="date"
-                        {...register('startDate')}
-                        className={`pl-10 h-12 rounded-xl border-border/60 ${errors.startDate ? 'border-destructive' : ''}`}
-                      />
-                    </div>
+                    <Controller
+                      control={control}
+                      name="startDate"
+                      render={({ field }) => (
+                        <DatePicker
+                          date={field.value ? parse(field.value, 'yyyy-MM-dd', new Date()) : undefined}
+                          setDate={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
+                          placeholder="Select Start Date"
+                          minDate={new Date()}
+                          error={!!errors.startDate}
+                        />
+                      )}
+                    />
                     {errors.startDate && (
                       <p className="text-destructive text-sm">{errors.startDate.message}</p>
                     )}
@@ -355,15 +384,23 @@ export default function QuotePage() {
 
                   <div className="space-y-2">
                     <Label htmlFor="endDate" className="text-sm font-medium">{t.quote.endDate} *</Label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                      <Input
-                        id="endDate"
-                        type="date"
-                        {...register('endDate')}
-                        className={`pl-10 h-12 rounded-xl border-border/60 ${errors.endDate ? 'border-destructive' : ''}`}
-                      />
-                    </div>
+                    <Controller
+                      control={control}
+                      name="endDate"
+                      render={({ field }) => {
+                        const startDateStr = watch('startDate');
+                        const startDate = startDateStr ? parse(startDateStr, 'yyyy-MM-dd', new Date()) : new Date();
+                        return (
+                          <DatePicker
+                            date={field.value ? parse(field.value, 'yyyy-MM-dd', new Date()) : undefined}
+                            setDate={(date) => field.onChange(date ? format(date, 'yyyy-MM-dd') : '')}
+                            placeholder="Select End Date"
+                            minDate={startDate}
+                            error={!!errors.endDate}
+                          />
+                        );
+                      }}
+                    />
                     {errors.endDate && (
                       <p className="text-destructive text-sm">{errors.endDate.message}</p>
                     )}

@@ -7,7 +7,7 @@ import Image, { StaticImageData } from 'next/image';
 import {
   ArrowLeft, Clock, Users, Star, MapPin,
   Check, X, Share2, Heart,
-  Globe, Languages, Mountain
+  Globe, Languages, Mountain, Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -713,8 +713,11 @@ export default function TourDetailPage() {
                       Book Now
                     </Button>
 
-                    <Link href={`/quote?tour=${tour.slug}`}>
+                    <Link
+                      href={`/quote?tourName=${encodeURIComponent(tour.name)}&tourId=${tour.id}&duration=${encodeURIComponent(tour.duration || '')}&destinations=${encodeURIComponent(tour.destinations?.join(',') || '')}`}
+                    >
                       <Button variant="outline" size="lg" className="w-full">
+                        <Sparkles className="w-4 h-4 mr-2 text-sunset" />
                         Request Custom Quote
                       </Button>
                     </Link>

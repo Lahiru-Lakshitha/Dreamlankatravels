@@ -15,6 +15,7 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { logout } from '@/app/auth/actions';
 import { MobileMenu } from './MobileMenu';
 
 export default function Header() {
@@ -22,7 +23,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const pathname = usePathname();
-  const { user, profile, isAdmin, signOut, updateProfile } = useAuth();
+  const { user, profile, isAdmin, updateProfile, isLoading } = useAuth();
   const { language, setLanguage, t, languages } = useLanguage();
 
   const navItems = [
@@ -95,7 +96,7 @@ export default function Header() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    await logout();
     setIsMobileMenuOpen(false);
   };
 
@@ -209,7 +210,9 @@ export default function Header() {
           </Button>
 
           {/* User Menu or Login */}
-          {user ? (
+          {isLoading ? (
+            <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
+          ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

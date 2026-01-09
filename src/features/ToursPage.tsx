@@ -10,165 +10,30 @@ import { PageHeroStrip } from '@/components/layout/PageHeroStrip';
 import { TourSearchFilters, TourFilters } from '@/components/tours/TourSearchFilters';
 import { TourCard } from '@/components/tours/TourCard';
 import { ContentLoading } from '@/components/ui/loading-spinner';
-import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useTours } from '@/hooks/useTours';
 
-// Fallback static tours
-import beachImage from '@/assets/destination-beach.jpg';
-import templeImage from '@/assets/destination-temple.jpg';
-import wildlifeImage from '@/assets/destination-wildlife.jpg';
-import trainImage from '@/assets/destination-train.jpg';
-
-const FALLBACK_TOURS = [
-  {
-    id: 'fallback-1',
-    slug: 'cultural-triangle-explorer',
-    name: 'Cultural Triangle Explorer',
-    short_description: 'Explore the ancient kingdoms of Sri Lanka through UNESCO World Heritage sites.',
-    duration: '7 Days / 6 Nights',
-    price: 899,
-    image_url: templeImage,
-    rating: 4.9,
-    review_count: 124,
-    tour_type: 'cultural',
-    destinations: ['Colombo', 'Sigiriya', 'Kandy'],
-    highlights: ['Sigiriya Rock Fortress', 'Temple of the Tooth', 'Dambulla Cave Temple'],
-    featured: true,
-    group_size_max: 12,
-  },
-  {
-    id: 'fallback-2',
-    slug: 'beach-paradise-getaway',
-    name: 'Beach Paradise Getaway',
-    short_description: 'Relax on pristine beaches and discover the charming coastal towns.',
-    duration: '5 Days / 4 Nights',
-    price: 699,
-    image_url: beachImage,
-    rating: 4.8,
-    review_count: 89,
-    tour_type: 'beach',
-    destinations: ['Mirissa', 'Unawatuna', 'Galle'],
-    highlights: ['Mirissa Beach', 'Whale Watching', 'Galle Fort'],
-    featured: true,
-    group_size_max: 8,
-  },
-  {
-    id: 'fallback-3',
-    slug: 'wildlife-safari-adventure',
-    name: 'Wildlife Safari Adventure',
-    short_description: 'Encounter elephants, leopards, and incredible wildlife in their natural habitat.',
-    duration: '6 Days / 5 Nights',
-    price: 999,
-    image_url: wildlifeImage,
-    rating: 4.9,
-    review_count: 156,
-    tour_type: 'wildlife',
-    destinations: ['Yala', 'Udawalawe', 'Minneriya'],
-    highlights: ['Yala National Park', 'Elephant Gathering', 'Leopard Spotting'],
-    featured: true,
-    group_size_max: 6,
-  },
-  {
-    id: 'fallback-4',
-    slug: 'hill-country-tea-trails',
-    name: 'Hill Country & Tea Trails',
-    short_description: 'Journey through misty mountains and lush tea plantations.',
-    duration: '5 Days / 4 Nights',
-    price: 749,
-    image_url: trainImage,
-    rating: 4.7,
-    review_count: 78,
-    tour_type: 'adventure',
-    destinations: ['Ella', 'Nuwara Eliya', 'Kandy'],
-    highlights: ['Scenic Train Ride', 'Tea Plantation Visit', 'Ella Rock Hike'],
-    featured: false,
-    group_size_max: 10,
-  },
-  {
-    id: 'fallback-5',
-    slug: 'complete-sri-lanka',
-    name: 'Complete Sri Lanka',
-    short_description: 'The ultimate Sri Lankan experience covering all highlights.',
-    duration: '14 Days / 13 Nights',
-    price: 1899,
-    image_url: templeImage,
-    rating: 5.0,
-    review_count: 67,
-    tour_type: 'cultural',
-    destinations: ['Colombo', 'Sigiriya', 'Kandy', 'Ella', 'Yala', 'Mirissa'],
-    highlights: ['Cultural Triangle', 'Hill Country', 'Wildlife Safari', 'Beach Relaxation'],
-    featured: true,
-    group_size_max: 8,
-  },
-  {
-    id: 'fallback-6',
-    slug: 'romantic-honeymoon',
-    name: 'Romantic Honeymoon',
-    short_description: 'Create unforgettable memories with your loved one.',
-    duration: '8 Days / 7 Nights',
-    price: 1299,
-    image_url: beachImage,
-    rating: 4.9,
-    review_count: 45,
-    tour_type: 'honeymoon',
-    destinations: ['Bentota', 'Kandy', 'Nuwara Eliya'],
-    highlights: ['Private Tours', 'Luxury Stays', 'Candlelit Dinners'],
-    featured: false,
-    group_size_max: 2,
-  },
-];
+// Fallback static tours via hook now
 
 export default function ToursPage() {
   const { t } = useLanguage();
-  const [tours, setTours] = useState<any[]>([]);
+  const { tours, isLoading } = useTours();
   const [filteredTours, setFilteredTours] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [destinations, setDestinations] = useState<string[]>([]);
   const [tourTypes, setTourTypes] = useState<string[]>([]);
 
   useEffect(() => {
-    fetchTours();
-  }, []);
+    if (tours.length > 0) {
+      setFilteredTours(tours);
 
-  const fetchTours = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('tours')
-        .select('*')
-        .order('featured', { ascending: false })
-        .order('rating', { ascending: false });
+      // Extract unique destinations and tour types
+      const allDests = tours.flatMap(t => t.destinations || []);
+      setDestinations([...new Set(allDests)]);
 
-      if (error) throw error;
-
-      if (data && data.length > 0) {
-        setTours(data);
-        setFilteredTours(data);
-
-        // Extract unique destinations and tour types
-        const allDests = data.flatMap(t => t.destinations || []);
-        setDestinations([...new Set(allDests)]);
-
-        const allTypes = data.map(t => t.tour_type).filter(Boolean);
-        setTourTypes([...new Set(allTypes)]);
-      } else {
-        // Use fallback data
-        setTours(FALLBACK_TOURS);
-        setFilteredTours(FALLBACK_TOURS);
-
-        const allDests = FALLBACK_TOURS.flatMap(t => t.destinations || []);
-        setDestinations([...new Set(allDests)]);
-
-        const allTypes = FALLBACK_TOURS.map(t => t.tour_type).filter(Boolean) as string[];
-        setTourTypes([...new Set(allTypes)]);
-      }
-    } catch (error) {
-      console.error('Error fetching tours:', error);
-      setTours(FALLBACK_TOURS);
-      setFilteredTours(FALLBACK_TOURS);
-    } finally {
-      setIsLoading(false);
+      const allTypes = tours.map(t => t.tour_type).filter(Boolean) as string[];
+      setTourTypes([...new Set(allTypes)]);
     }
-  };
+  }, [tours]);
 
   const handleFiltersChange = useCallback((filters: TourFilters) => {
     let result = [...tours];

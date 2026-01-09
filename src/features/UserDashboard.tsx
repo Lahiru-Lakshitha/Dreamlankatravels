@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { logout } from '@/app/auth/actions';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -108,8 +109,7 @@ export default function UserDashboard() {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    router.push('/');
+    await logout();
   };
 
   const getStatusBadge = (status: string) => {

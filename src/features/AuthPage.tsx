@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { login, signup } from '@/app/auth/actions';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -37,7 +39,7 @@ export default function AuthPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  const { user, signIn, signUp } = useAuth();
+  const { user } = useAuth();
   const { t } = useLanguage();
   const { toast } = useToast();
 
@@ -57,15 +59,19 @@ export default function AuthPage() {
 
   const handleLogin = async (data: LoginFormData) => {
     setIsSubmitting(true);
-    const { error } = await signIn(data.email, data.password);
+    const formData = new FormData();
+    formData.append('email', data.email);
+    formData.append('password', data.password);
+
+    const result = await login(formData); // Call Server Action
     setIsSubmitting(false);
 
-    if (error) {
+    if (result?.error) {
       toast({
         title: t.auth.loginFailed,
-        description: error.message === 'Invalid login credentials'
+        description: result.error === 'Invalid login credentials'
           ? t.auth.invalidCredentials
-          : error.message,
+          : result.error,
         variant: 'destructive',
       });
     } else {
@@ -73,18 +79,23 @@ export default function AuthPage() {
         title: t.auth.welcomeBack,
         description: t.auth.loginSuccess,
       });
-      router.push('/');
+      // Redirect handled by server action, but fallback here if needed
     }
   };
 
   const handleSignup = async (data: SignupFormData) => {
     setIsSubmitting(true);
-    const { error } = await signUp(data.email, data.password, data.fullName);
+    const formData = new FormData();
+    formData.append('email', data.email);
+    formData.append('password', data.password);
+    formData.append('name', data.fullName);
+
+    const result = await signup(formData); // Call Server Action
     setIsSubmitting(false);
 
-    if (error) {
-      let message = error.message;
-      if (error.message.includes('already registered')) {
+    if (result?.error) {
+      let message = result.error;
+      if (result.error.includes('already registered')) {
         message = t.auth.emailExists;
       }
       toast({
@@ -92,12 +103,13 @@ export default function AuthPage() {
         description: message,
         variant: 'destructive',
       });
-    } else {
+    } else if (result?.success) {
       toast({
         title: t.auth.accountCreated,
-        description: t.auth.signupSuccess,
+        description: result.message,
       });
-      router.push('/');
+      // Optional: switch to login active tab
+      setIsLogin(true);
     }
   };
 
@@ -180,6 +192,11 @@ export default function AuthPage() {
                 {loginForm.formState.errors.password && (
                   <p className="text-destructive text-sm">{loginForm.formState.errors.password.message}</p>
                 )}
+              </div>
+              <div className="flex justify-end">
+                <Link href="/auth/forgot-password" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Forgot password?
+                </Link>
               </div>
 
               <Button type="submit" variant="ocean" size="lg" className="w-full" disabled={isSubmitting}>

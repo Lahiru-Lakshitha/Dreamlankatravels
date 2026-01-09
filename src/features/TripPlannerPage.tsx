@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 
 import Link from 'next/link';
 import { Calendar, DollarSign, Clock, Compass, ArrowRight, Sparkles, Filter } from 'lucide-react';
+import { format, parse } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -16,6 +18,7 @@ import { PageHeroStrip } from '@/components/layout/PageHeroStrip';
 import { ContentLoading } from '@/components/ui/loading-spinner';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { submitTripPlan } from '@/app/actions/forms';
 
 interface Tour {
   id: string;
@@ -164,8 +167,25 @@ export default function TripPlannerPage() {
     }));
   };
 
-  const handleSearch = () => {
+
+
+  const handleSearch = async () => {
     setIsSearching(true);
+
+    // Save the plan to backend for analytics/lead gen
+    const formData = new FormData();
+    formData.append("budgetMin", preferences.budget[0].toString());
+    formData.append("budgetMax", preferences.budget[1].toString());
+    if (preferences.startDate) formData.append("startDate", preferences.startDate);
+    if (preferences.endDate) formData.append("endDate", preferences.endDate);
+    if (preferences.duration) formData.append("duration", preferences.duration);
+    if (preferences.interests.length > 0) {
+      formData.append("interests", JSON.stringify(preferences.interests));
+    }
+
+    // Fire and forget, or await? Await to ensure save.
+    await submitTripPlan(formData);
+
     // Simulate AI processing delay for future-ready experience
     setTimeout(() => {
       const results = getRecommendations(tours, preferences);
@@ -228,20 +248,22 @@ export default function TripPlannerPage() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
                       <Label className="text-[10px] text-muted-foreground/80 dark:text-white/50 font-semibold ml-1 block">Start</Label>
-                      <Input
-                        type="date"
-                        value={preferences.startDate}
-                        onChange={(e) => setPreferences({ ...preferences, startDate: e.target.value })}
-                        className="bg-white dark:bg-white/10 border-transparent shadow-sm h-10 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 text-ocean-dark dark:text-white dark:[color-scheme:dark]"
+                      <DatePicker
+                        date={preferences.startDate ? parse(preferences.startDate, 'yyyy-MM-dd', new Date()) : undefined}
+                        setDate={(date) => setPreferences({ ...preferences, startDate: date ? format(date, 'yyyy-MM-dd') : '' })}
+                        placeholder="Start Date"
+                        minDate={new Date()}
+                        className="h-10 text-xs"
                       />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-[10px] text-muted-foreground/80 dark:text-white/50 font-semibold ml-1 block">End</Label>
-                      <Input
-                        type="date"
-                        value={preferences.endDate}
-                        onChange={(e) => setPreferences({ ...preferences, endDate: e.target.value })}
-                        className="bg-white dark:bg-white/10 border-transparent shadow-sm h-10 rounded-xl text-xs font-medium focus:ring-2 focus:ring-emerald-500/20 text-ocean-dark dark:text-white dark:[color-scheme:dark]"
+                      <DatePicker
+                        date={preferences.endDate ? parse(preferences.endDate, 'yyyy-MM-dd', new Date()) : undefined}
+                        setDate={(date) => setPreferences({ ...preferences, endDate: date ? format(date, 'yyyy-MM-dd') : '' })}
+                        placeholder="End Date"
+                        minDate={preferences.startDate ? parse(preferences.startDate, 'yyyy-MM-dd', new Date()) : new Date()}
+                        className="h-10 text-xs"
                       />
                     </div>
                   </div>

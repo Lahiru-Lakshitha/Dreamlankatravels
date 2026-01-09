@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, Users, Star, MapPin, ArrowRight } from 'lucide-react';
+import { Clock, Users, Star, MapPin, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
@@ -119,19 +119,36 @@ export function TourCard({ tour }: TourCardProps) {
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-4 border-t border-border">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-border">
           <div>
             <span className="text-muted-foreground text-xs sm:text-sm">From</span>
             <p className="font-serif text-xl sm:text-2xl font-bold text-sunset">
               ${tour.price?.toLocaleString() || 'TBD'}
             </p>
           </div>
-          <Link href={`/tours/${tour.slug}`}>
-            <Button variant="ocean" size="sm" className="group/btn">
-              View Details
-              <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
-            </Button>
-          </Link>
+
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Link
+              href={`/quote?tourName=${encodeURIComponent(tour.name)}&tourId=${tour.id}&duration=${encodeURIComponent(tour.duration || '')}&destinations=${encodeURIComponent(tour.destinations?.join(',') || '')}`}
+              className="w-full sm:w-auto"
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full sm:w-auto group/quote"
+              >
+                <Sparkles className="w-3.5 h-3.5 mr-2 transition-all group-hover/quote:text-sunset" />
+                Custom Quote
+              </Button>
+            </Link>
+
+            <Link href={`/tours/${tour.slug}`} className="w-full sm:w-auto">
+              <Button variant="ocean" size="sm" className="w-full sm:w-auto group/btn">
+                View Details
+                <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover/btn:translate-x-1" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

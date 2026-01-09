@@ -1,16 +1,11 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
-import { CalendarIcon, Users, CreditCard, AlertCircle } from 'lucide-react';
+import { Users, CreditCard, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Calendar } from '@/components/ui/calendar';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { DatePicker } from '@/components/ui/date-picker';
 import {
   Select,
   SelectContent,
@@ -55,7 +50,7 @@ export function BookingForm({ tour, onSuccess }: BookingFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!travelDate) {
       toast({
         title: 'Travel date required',
@@ -95,7 +90,7 @@ export function BookingForm({ tour, onSuccess }: BookingFormProps) {
       if (error) throw error;
 
       const bookingRef = (data as any)?.booking_reference || 'VL-PENDING';
-      
+
       toast({
         title: 'Booking submitted!',
         description: `Your booking reference is ${bookingRef}. We'll contact you shortly to confirm.`,
@@ -150,36 +145,20 @@ export function BookingForm({ tour, onSuccess }: BookingFormProps) {
       {/* Travel Date */}
       <div className="mb-4">
         <Label>Travel Date *</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                'w-full justify-start text-left font-normal',
-                !travelDate && 'text-muted-foreground'
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {travelDate ? format(travelDate, 'PPP') : 'Select date'}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={travelDate}
-              onSelect={setTravelDate}
-              disabled={(date) => date < new Date()}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+        <DatePicker
+          date={travelDate}
+          setDate={setTravelDate}
+          placeholder="Select date"
+          minDate={new Date()}
+          className="w-full"
+        />
       </div>
 
       {/* Travelers */}
       <div className="mb-4">
         <Label>Number of Travelers *</Label>
-        <Select 
-          value={travelers.toString()} 
+        <Select
+          value={travelers.toString()}
           onValueChange={(v) => setTravelers(parseInt(v))}
         >
           <SelectTrigger>
@@ -260,15 +239,15 @@ export function BookingForm({ tour, onSuccess }: BookingFormProps) {
       <Alert className="mb-6">
         <CreditCard className="h-4 w-4" />
         <AlertDescription>
-          <strong>Payment:</strong> After submitting, our team will contact you with payment instructions. 
+          <strong>Payment:</strong> After submitting, our team will contact you with payment instructions.
           A 30% deposit secures your booking.
         </AlertDescription>
       </Alert>
 
-      <Button 
-        type="submit" 
-        variant="hero" 
-        size="lg" 
+      <Button
+        type="submit"
+        variant="hero"
+        size="lg"
         className="w-full"
         disabled={isSubmitting}
       >
