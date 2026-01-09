@@ -63,23 +63,33 @@ export default function AuthPage() {
     formData.append('email', data.email);
     formData.append('password', data.password);
 
-    const result = await login(formData); // Call Server Action
-    setIsSubmitting(false);
+    try {
+      const result = await login(formData); // Call Server Action
 
-    if (result?.error) {
+      if (!result.success) { // Explicitly check success
+        toast({
+          title: t.auth.loginFailed,
+          description: result.error === 'Invalid login credentials'
+            ? t.auth.invalidCredentials
+            : result.error,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: t.auth.welcomeBack,
+          description: t.auth.loginSuccess,
+        });
+        // Redirect handled client-side now
+        router.push('/dashboard');
+      }
+    } catch (error) {
       toast({
         title: t.auth.loginFailed,
-        description: result.error === 'Invalid login credentials'
-          ? t.auth.invalidCredentials
-          : result.error,
+        description: "An unexpected error occurred",
         variant: 'destructive',
       });
-    } else {
-      toast({
-        title: t.auth.welcomeBack,
-        description: t.auth.loginSuccess,
-      });
-      // Redirect handled by server action, but fallback here if needed
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -90,26 +100,35 @@ export default function AuthPage() {
     formData.append('password', data.password);
     formData.append('name', data.fullName);
 
-    const result = await signup(formData); // Call Server Action
-    setIsSubmitting(false);
+    try {
+      const result = await signup(formData); // Call Server Action
 
-    if (result?.error) {
-      let message = result.error;
-      if (result.error.includes('already registered')) {
-        message = t.auth.emailExists;
+      if (!result.success) {
+        let message = result.error;
+        if (message && message.includes('already registered')) {
+          message = t.auth.emailExists;
+        }
+        toast({
+          title: t.auth.signupFailed,
+          description: message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: t.auth.accountCreated,
+          description: result.message,
+        });
+        // Previous behavior was redirect to dashboard
+        router.push('/dashboard');
       }
+    } catch (error) {
       toast({
         title: t.auth.signupFailed,
-        description: message,
+        description: "An unexpected error occurred",
         variant: 'destructive',
       });
-    } else if (result?.success) {
-      toast({
-        title: t.auth.accountCreated,
-        description: result.message,
-      });
-      // Optional: switch to login active tab
-      setIsLogin(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

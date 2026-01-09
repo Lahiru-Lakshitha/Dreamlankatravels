@@ -1,17 +1,18 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+// import { redirect } from 'next/navigation' // Removed to allow returning typed results
 import { createClient } from '@/lib/supabase/server'
+import { AuthResult } from '@/types/auth'
 
-export async function login(formData: FormData) {
+export async function login(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
     if (!email || !password) {
-        return { error: 'Email and password are required' }
+        return { success: false, error: 'Email and password are required' }
     }
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -20,14 +21,14 @@ export async function login(formData: FormData) {
     })
 
     if (error) {
-        return { error: error.message }
+        return { success: false, error: error.message }
     }
 
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    return { success: true, message: 'Logged in successfully' }
 }
 
-export async function signup(formData: FormData) {
+export async function signup(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
 
     const email = formData.get('email') as string
@@ -35,7 +36,7 @@ export async function signup(formData: FormData) {
     const name = formData.get('name') as string
 
     if (!email || !password) {
-        return { error: 'Email and password are required' }
+        return { success: false, error: 'Email and password are required' }
     }
 
     // 1. Sign up user
@@ -50,37 +51,36 @@ export async function signup(formData: FormData) {
     })
 
     if (error) {
-        return { error: error.message }
+        return { success: false, error: error.message }
     }
 
     if (data?.user && !data.user.identities?.length) {
-        return { error: 'Account already exists. Try logging in.' }
+        return { success: false, error: 'Account already exists. Try logging in.' }
     }
 
-    // 2. Redirect or Return Success
-    // If email confirmation is enabled, they need to verify first.
-    // However, if we want immediate access (if confirmation not required):
-    // return { success: true, message: 'Check your email to verify your account.' }
-
-    // If auto-confirm is on or we want to redirect:
     revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    return { success: true, message: 'Account created successfully' }
 }
 
-export async function logout() {
+export async function logout(): Promise<AuthResult> {
     const supabase = createClient()
     await supabase.auth.signOut()
 
     revalidatePath('/', 'layout')
-    redirect('/')
+    // Note: Logout might still benefit from redirecting, but for consistency we return a result
+    // and let the client handle the redirect if needed. 
+    // However, usually logout happens via a button that can handle this.
+    // If the original logout function was used in a way that relied on server redirect, we might need to adjust.
+    // Given the requirement "Update ALL authentication-related Server Actions", we will return AuthResult.
+    return { success: true, message: 'Logged out successfully' }
 }
 
-export async function resetPassword(formData: FormData) {
+export async function resetPassword(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
     const email = formData.get('email') as string
 
     if (!email) {
-        return { error: 'Email is required' }
+        return { success: false, error: 'Email is required' }
     }
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -88,23 +88,23 @@ export async function resetPassword(formData: FormData) {
     })
 
     if (error) {
-        return { error: error.message }
+        return { success: false, error: error.message }
     }
 
     return { success: true, message: 'Check your email for the password reset link' }
 }
 
-export async function updatePassword(formData: FormData) {
+export async function updatePassword(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
     const password = formData.get('newPassword') as string
     const confirmPassword = formData.get('confirmPassword') as string
 
     if (!password || !confirmPassword) {
-        return { error: 'Please fill in all fields' }
+        return { success: false, error: 'Please fill in all fields' }
     }
 
     if (password !== confirmPassword) {
-        return { error: 'Passwords do not match' }
+        return { success: false, error: 'Passwords do not match' }
     }
 
     const { error } = await supabase.auth.updateUser({
@@ -112,7 +112,7 @@ export async function updatePassword(formData: FormData) {
     })
 
     if (error) {
-        return { error: error.message }
+        return { success: false, error: error.message }
     }
 
     return { success: true, message: 'Password updated successfully' }

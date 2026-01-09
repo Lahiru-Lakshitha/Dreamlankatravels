@@ -44,8 +44,8 @@ export default function UpdatePasswordPage() {
 
         try {
             const result = await updatePassword(formData);
-            if (result.error) {
-                setServerError(result.error);
+            if (!result.success) {
+                setServerError(result.error || 'An unexpected error occurred');
             } else {
                 setSuccess(true);
                 // Redirect after 3 seconds

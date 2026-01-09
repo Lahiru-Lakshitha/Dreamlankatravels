@@ -37,8 +37,8 @@ export default function ForgotPasswordPage() {
 
         try {
             const result = await resetPassword(formData);
-            if (result.error) {
-                setServerError(result.error);
+            if (!result.success) {
+                setServerError(result.error || 'An unexpected error occurred');
             } else {
                 setIsSuccess(true);
             }
