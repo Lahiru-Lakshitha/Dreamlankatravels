@@ -59,9 +59,13 @@ export default function UpdatePasswordPage() {
                 setServerError(result.error || 'An unexpected error occurred');
             } else {
                 setSuccess(true);
-                // Redirect to dashboard as per master prompt
+                // FORCE SIGN OUT to ensure user must log in with new password
+                // This fixes the issue where "Go to Login" redirects to Dashboard because session is still active
+                await supabase.auth.signOut();
+
                 setTimeout(() => {
-                    router.push('/dashboard');
+                    // Force a hard reload/redirect to clear any client states
+                    window.location.href = '/auth?message=password-updated';
                 }, 2000);
             }
         } catch (error) {
