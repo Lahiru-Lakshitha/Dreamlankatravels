@@ -49,13 +49,9 @@ export default function UpdatePasswordPage() {
                 setServerError(result.error || 'An unexpected error occurred');
             } else {
                 setSuccess(true);
-                // Force logout and redirect
-                const { error } = await supabase.auth.signOut();
-                if (error) console.error('Sign out error:', error);
-
-                // Redirect after 3 seconds
+                // Redirect to dashboard as per master prompt
                 setTimeout(() => {
-                    window.location.href = '/auth?message=password-updated';
+                    router.push('/dashboard');
                 }, 2000);
             }
         } catch (error) {

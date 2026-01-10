@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { AuthResult } from '@/types/auth'
-import { getOrigin } from '@/lib/auth-helpers'
+import { getBaseUrl } from '@/lib/getBaseUrl'
 
 export async function login(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
@@ -31,7 +31,6 @@ export async function login(formData: FormData): Promise<AuthResult> {
 
 export async function signup(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
-    const origin = getOrigin()
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -49,9 +48,8 @@ export async function signup(formData: FormData): Promise<AuthResult> {
             data: {
                 full_name: name || '',
             },
-            // STRICT REDIRECT: Ensure this points to callback. 
-            // The callback route will verify the type 'signup' and redirect to /auth/confirm-success
-            emailRedirectTo: `${origin}/auth/callback`,
+            // STRICT REDIRECT: Ensure this points to callback with type=signup
+            emailRedirectTo: `${getBaseUrl()}/auth/callback?type=signup`,
         },
     })
 
@@ -81,16 +79,14 @@ export async function logout(): Promise<AuthResult> {
 export async function resetPassword(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
     const email = formData.get('email') as string
-    const origin = getOrigin()
 
     if (!email) {
         return { success: false, error: 'Email is required' }
     }
 
     // STRICT REDIRECT: Point to callback with type=recovery for consistency.
-    // Auth flow: User clicks link -> /auth/callback?code=...&type=recovery -> Server sets session -> Redirect to /auth/update-password
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${origin}/auth/callback?type=recovery`,
+        redirectTo: `${getBaseUrl()}/auth/callback?type=recovery`,
     })
 
     if (error) {
