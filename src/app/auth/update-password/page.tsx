@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -36,6 +36,16 @@ export default function UpdatePasswordPage() {
     } = useForm<UpdatePasswordFormData>({
         resolver: zodResolver(updatePasswordSchema),
     });
+
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                router.replace('/auth');
+            }
+        };
+        checkSession();
+    }, [router]);
 
     const onSubmit = async (data: UpdatePasswordFormData) => {
         setServerError(null);

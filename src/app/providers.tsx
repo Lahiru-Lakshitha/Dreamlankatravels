@@ -8,7 +8,9 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { useState } from "react";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+import { Session } from "@supabase/supabase-js";
+
+export function Providers({ children, initialSession = null }: { children: React.ReactNode; initialSession?: Session | null }) {
     const [queryClient] = useState(() => new QueryClient());
 
     return (
@@ -16,7 +18,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <TooltipProvider>
                 <Toaster />
                 <Sonner />
-                <AuthProvider>
+                <AuthProvider initialSession={initialSession}>
                     <LanguageProvider>
                         {children}
                     </LanguageProvider>
