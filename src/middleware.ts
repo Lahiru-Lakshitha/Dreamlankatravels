@@ -40,8 +40,13 @@ export async function middleware(request: NextRequest) {
     // Route Protection Logic
     const path = request.nextUrl.pathname;
 
-    // 1. If user is logged in, prevent access to /auth (login/signup)
-    if (user && path.startsWith("/auth") && !path.startsWith("/auth/logout")) {
+    // 1. If user is logged in, prevent access to /auth (login/signup), BUT allow callback/update-password
+    if (user && path.startsWith("/auth") &&
+        !path.startsWith("/auth/logout") &&
+        !path.startsWith("/auth/callback") &&
+        !path.startsWith("/auth/update-password") &&
+        !path.startsWith("/auth/confirm-success")
+    ) {
         return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 

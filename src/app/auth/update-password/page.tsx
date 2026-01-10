@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import { MetaTags } from '@/components/seo/MetaTags';
 import { updatePassword } from '@/app/auth/actions';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/integrations/supabase/client';
 
 const updatePasswordSchema = z.object({
     newPassword: z.string().min(6, 'Password must be at least 6 characters'),
@@ -48,10 +49,14 @@ export default function UpdatePasswordPage() {
                 setServerError(result.error || 'An unexpected error occurred');
             } else {
                 setSuccess(true);
+                // Force logout and redirect
+                const { error } = await supabase.auth.signOut();
+                if (error) console.error('Sign out error:', error);
+
                 // Redirect after 3 seconds
                 setTimeout(() => {
-                    router.push('/auth');
-                }, 3000);
+                    window.location.href = '/auth?message=password-updated';
+                }, 2000);
             }
         } catch (error) {
             setServerError('An unexpected error occurred. Please try again.');
