@@ -60,28 +60,42 @@ export default function UserDashboard() {
   }, [profile]);
 
   useEffect(() => {
-    if (user) {
+    // Only fetch if we have a user and aren't loading auth state
+    if (!isLoading && user) {
       fetchQuotes();
+    } else if (!isLoading && !user) {
+      // If not loading and no user, we should be redirected by the other useEffect, 
+      // but just in case, stop loading quotes.
+      setLoadingQuotes(false);
     }
-  }, [user]);
+  }, [user, isLoading]);
 
   const fetchQuotes = async () => {
-    const { data, error } = await supabase
-      .from('quotes')
-      .select('*')
-      .eq('user_id', user?.id)
-      .order('created_at', { ascending: false });
+    try {
+      if (!user) return;
 
-    if (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load your quote requests.',
-        variant: 'destructive',
-      });
-    } else if (data) {
-      setQuotes(data as Quote[]);
+      const { data, error } = await supabase
+        .from('quotes')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching quotes:', error);
+        // Don't show toast for empty RLS if it's just no data
+        toast({
+          title: 'Notice',
+          description: 'Could not load quotes at this time.',
+          variant: 'destructive',
+        });
+      } else if (data) {
+        setQuotes(data as Quote[]);
+      }
+    } catch (err) {
+      console.error('Unexpected error fetching quotes:', err);
+    } finally {
+      setLoadingQuotes(false);
     }
-    setLoadingQuotes(false);
   };
 
   const handleUpdateProfile = async () => {

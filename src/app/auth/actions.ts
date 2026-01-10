@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { AuthResult } from '@/types/auth'
-import { headers } from 'next/headers'
+import { getOrigin } from '@/lib/auth-helpers'
 
 export async function login(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
@@ -31,7 +31,7 @@ export async function login(formData: FormData): Promise<AuthResult> {
 
 export async function signup(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
-    const origin = headers().get('origin')
+    const origin = getOrigin()
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -49,8 +49,9 @@ export async function signup(formData: FormData): Promise<AuthResult> {
             data: {
                 full_name: name || '',
             },
-            // Use origin header for dynamic redirect path in production vs local
-            emailRedirectTo: `${origin || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+            // STRICT REDIRECT: Ensure this points to callback. 
+            // The callback route will verify the type 'signup' and redirect to /auth/confirm-success
+            emailRedirectTo: `${origin}/auth/callback`,
         },
     })
 
@@ -68,6 +69,8 @@ export async function signup(formData: FormData): Promise<AuthResult> {
 }
 
 export async function logout(): Promise<AuthResult> {
+    // Note: The primary logout should be client-side to ensuring cache clearing, 
+    // but this server action supports server-side needs.
     const supabase = createClient()
     await supabase.auth.signOut()
 
@@ -78,14 +81,16 @@ export async function logout(): Promise<AuthResult> {
 export async function resetPassword(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
     const email = formData.get('email') as string
-    const origin = headers().get('origin')
+    const origin = getOrigin()
 
     if (!email) {
         return { success: false, error: 'Email is required' }
     }
 
+    // STRICT REDIRECT: Point to callback with type=recovery for consistency.
+    // Auth flow: User clicks link -> /auth/callback?code=...&type=recovery -> Server sets session -> Redirect to /auth/update-password
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${origin || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback?next=/auth/update-password`,
+        redirectTo: `${origin}/auth/callback?type=recovery`,
     })
 
     if (error) {

@@ -2,25 +2,35 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: Request) {
-    const { searchParams, origin } = new URL(request.url);
-    const code = searchParams.get('code');
-    // if "next" is in param, use it as the redirect URL
-    const next = searchParams.get('next') ?? '/dashboard';
+    const requestUrl = new URL(request.url);
+    const code = requestUrl.searchParams.get('code');
+    const type = requestUrl.searchParams.get('type');
+    const next = requestUrl.searchParams.get('next') ?? '/dashboard';
+
+    // Use origin from request or fallback to env vars for safety
+    // The 'origin' property of the URL object is usually robust in modern environments
+    const origin = requestUrl.origin;
 
     if (code) {
         const supabase = createClient();
         const { error } = await supabase.auth.exchangeCodeForSession(code);
+
         if (!error) {
-            const forwardedHost = request.headers.get('x-forwarded-host'); // original origin before load balancer
-            const isLocalEnv = process.env.NODE_ENV === 'development';
-            if (isLocalEnv) {
-                // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-                return NextResponse.redirect(`${origin}${next}`);
-            } else if (forwardedHost) {
-                return NextResponse.redirect(`https://${forwardedHost}${next}`);
-            } else {
-                return NextResponse.redirect(`${origin}${next}`);
+            // STRICT REDIRECT LOGIC per Master Prompt
+
+            // 1. Recovery Flow -> Update Password
+            if (type === 'recovery') {
+                return NextResponse.redirect(`${origin}/auth/update-password`);
             }
+
+            // 2. Signup Flow -> Confirmation Success
+            // Note: Supabase 'signup' type confirmation usually means "email confirmed"
+            if (type === 'signup' || type === 'email_change') {
+                return NextResponse.redirect(`${origin}/auth/confirm-success`);
+            }
+
+            // 3. Default / invite / magiclink -> Dashboard or specified 'next'
+            return NextResponse.redirect(`${origin}${next}`);
         }
     }
 
