@@ -58,6 +58,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${playfair.variable} ${outfit.variable} scroll-smooth`}>
       <body className="font-sans antialiased bg-background text-foreground selection:bg-gold/30 selection:text-foreground">
+
         <Providers initialSession={session}>
           <Layout>{children}</Layout>
         </Providers>

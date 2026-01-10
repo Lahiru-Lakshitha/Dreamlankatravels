@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { MetaTags } from '@/components/seo/MetaTags';
@@ -73,7 +73,7 @@ export default function QuotePage() {
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { user, profile } = useAuth();
-  const { t } = useLanguage();
+
   const { toast } = useToast();
 
   const tourTypes = [

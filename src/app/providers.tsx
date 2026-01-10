@@ -5,7 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+
 import { useState } from "react";
 
 import { Session } from "@supabase/supabase-js";
@@ -19,9 +19,7 @@ export function Providers({ children, initialSession = null }: { children: React
                 <Toaster />
                 <Sonner />
                 <AuthProvider initialSession={initialSession}>
-                    <LanguageProvider>
-                        {children}
-                    </LanguageProvider>
+                    {children}
                 </AuthProvider>
             </TooltipProvider>
         </QueryClientProvider>

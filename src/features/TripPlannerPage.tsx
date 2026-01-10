@@ -17,7 +17,7 @@ import { MetaTags } from '@/components/seo/MetaTags';
 import { PageHeroStrip } from '@/components/layout/PageHeroStrip';
 import { ContentLoading } from '@/components/ui/loading-spinner';
 import { supabase } from '@/integrations/supabase/client';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 import { submitTripPlan } from '@/app/actions/forms';
 
 interface Tour {
@@ -128,7 +128,7 @@ function getRecommendations(tours: Tour[], preferences: Preferences): { tour: To
 }
 
 export default function TripPlannerPage() {
-  const { t } = useLanguage();
+
   const [tours, setTours] = useState<Tour[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);

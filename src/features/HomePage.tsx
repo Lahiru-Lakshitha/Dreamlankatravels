@@ -1,62 +1,38 @@
 "use client";
 
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Star, Award } from 'lucide-react';
+import { ArrowRight, Award, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { HeroCarousel } from '@/components/home/HeroCarousel';
-import { QuickQuotePreview } from '@/components/home/QuickQuotePreview';
-import { StatsSection } from '@/components/home/StatsSection';
-import { TestimonialsSection } from '@/components/home/TestimonialsSection';
-import { NewsletterSection } from '@/components/home/NewsletterSection';
-import { InstagramFeed } from '@/components/home/InstagramFeed';
-import { FAQSection } from '@/components/home/FAQSection';
-import { TourCard } from '@/components/tours/TourCard';
-import { useTours } from '@/hooks/useTours';
+import { t } from '@/data/translations';
+import { HeroPlaceholder } from '@/components/home/HeroPlaceholder';
+import { Tour } from '@/data/tours';
 
-// Images
-import beachImage from '@/assets/destination-beach.jpg';
-import templeImage from '@/assets/destination-temple.jpg';
+// Dynamic Imports for performance
+const HeroCarousel = dynamic(() => import('@/components/home/HeroCarousel').then(mod => mod.HeroCarousel), {
+  ssr: false,
+  loading: () => <HeroPlaceholder />
+});
+const DestinationsGrid = dynamic(() => import('@/components/home/DestinationsGrid').then(mod => mod.DestinationsGrid));
+const QuickQuotePreview = dynamic(() => import('@/components/home/QuickQuotePreview').then(mod => mod.QuickQuotePreview));
+const StatsSection = dynamic(() => import('@/components/home/StatsSection').then(mod => mod.StatsSection));
+const TestimonialsSection = dynamic(() => import('@/components/home/TestimonialsSection').then(mod => mod.TestimonialsSection));
+const NewsletterSection = dynamic(() => import('@/components/home/NewsletterSection').then(mod => mod.NewsletterSection));
+const InstagramFeed = dynamic(() => import('@/components/home/InstagramFeed').then(mod => mod.InstagramFeed));
+const FAQSection = dynamic(() => import('@/components/home/FAQSection').then(mod => mod.FAQSection));
+const TourCard = dynamic(() => import('@/components/tours/TourCard').then(mod => mod.TourCard));
+
+// Static Images for "Why Choose Us"
 import wildlifeImage from '@/assets/destination-wildlife.jpg';
 import trainImage from '@/assets/destination-train.jpg';
-import { cn } from '@/lib/utils';
 
-export default function HomePage() {
-  const { t } = useLanguage();
+interface HomePageProps {
+  tours: Tour[];
+}
 
-  const destinations = [
-    {
-      title: t.home.pristineBeaches,
-      description: t.home.goldenSands,
-      image: beachImage,
-      link: '/tours?type=beach',
-      delay: "100"
-    },
-    {
-      title: t.home.ancientTemples,
-      description: t.home.sacredHeritage,
-      image: templeImage,
-      link: '/tours?type=cultural',
-      delay: "200"
-    },
-    {
-      title: t.home.wildlifeSafari,
-      description: t.home.majesticElephants,
-      image: wildlifeImage,
-      link: '/tours?type=wildlife',
-      delay: "300"
-    },
-    {
-      title: t.home.scenicRailways,
-      description: t.home.mountainJourneys,
-      image: trainImage,
-      link: '/tours?destination=ella',
-      delay: "400"
-    },
-  ];
+export default function HomePage({ tours }: HomePageProps) {
 
-  const { tours } = useTours();
 
   const whyChooseUs = [
     { title: t.home.localExpertGuides, desc: t.home.localExpertGuidesDesc },
@@ -67,7 +43,7 @@ export default function HomePage() {
 
   return (
     <div className="overflow-hidden bg-background">
-      {/* Hero Carousel */}
+      {/* Hero Carousel - Dynamic with Placeholder */}
       <HeroCarousel />
 
       {/* Quick Quote Floating Section */}
@@ -75,65 +51,8 @@ export default function HomePage() {
         <QuickQuotePreview />
       </div>
 
-      {/* Destinations Section - Premium Grid */}
-      <section className="py-12 bg-background relative">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10 max-w-3xl mx-auto">
-            <span className="text-sunset font-serif italic text-lg tracking-wider">
-              {t.home.exploreSriLanka}
-            </span>
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-ocean-dark dark:text-white mt-2 mb-4">
-              {t.home.unforgettableDestinations}
-            </h2>
-            <p className="text-muted-foreground dark:text-white/80 text-lg leading-relaxed">
-              {t.home.destinationsSubtitle}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {destinations.map((dest, index) => (
-              <Link
-                key={dest.title}
-                href={dest.link}
-                className="group block"
-              >
-                <div className="relative h-[400px] w-full overflow-hidden rounded-2xl shadow-soft transition-all duration-700 hover:shadow-strong group-hover:-translate-y-2">
-                  <Image
-                    src={dest.image}
-                    alt={dest.title}
-                    fill
-                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                  />
-                  {/* Premium Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/90 via-ocean-dark/20 to-transparent opacity-80 transition-opacity group-hover:opacity-90" />
-
-                  {/* Content - Slide Up on Hover */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 transition-transform duration-500 group-hover:translate-y-0">
-                    <h3 className="text-2xl font-serif font-bold text-white mb-2">
-                      {dest.title}
-                    </h3>
-                    <p className="text-white/80 text-sm mb-4 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                      {dest.description}
-                    </p>
-                    <div className="flex items-center text-sunset text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
-                      Explore Now <ArrowRight className="w-4 h-4 ml-2" />
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link href="/destinations">
-              <Button variant="outline" size="lg" className="rounded-full px-8 hover:bg-ocean hover:text-white transition-colors border-2">
-                {t.home.viewAllDestinations}
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Destinations Section - Extracted & Dynamic */}
+      <DestinationsGrid />
 
       {/* Featured Tours Section - Unified with Tours Page */}
       <section className="py-16 sm:py-24 bg-muted/30 dark:bg-background relative">
@@ -163,14 +82,14 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {tours.slice(0, 3).map((tour) => (
+            {tours && tours.slice(0, 3).map((tour) => (
               <TourCard key={tour.id} tour={tour} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us Section - Split Layout */}
+      {/* Why Choose Us Section */}
       <section className="py-16 bg-ocean-dark relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
@@ -230,9 +149,7 @@ export default function HomePage() {
               {/* Trust Badge Floating */}
               <div className="absolute bottom-10 right-10 z-30 bg-white/90 backdrop-blur-xl p-6 rounded-2xl shadow-elevated max-w-xs animate-float">
                 <div className="flex gap-1 mb-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-sunset fill-sunset" />
-                  ))}
+                  <div className="flex text-sunset">★★★★★</div>
                 </div>
                 <p className="font-serif italic text-ocean-dark font-medium text-lg mb-2">
                   "{t.home.testimonialQuote}"
@@ -252,19 +169,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Dynamic Sections */}
       <StatsSection />
-
-      {/* Testimonials Section */}
       <TestimonialsSection />
-
-      {/* FAQ Section */}
       <FAQSection />
-
-      {/* Instagram Feed */}
       <InstagramFeed />
-
-      {/* Newsletter Section */}
       <NewsletterSection />
     </div>
   );

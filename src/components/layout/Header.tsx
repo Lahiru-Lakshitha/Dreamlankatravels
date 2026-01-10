@@ -14,8 +14,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { MobileMenu } from './MobileMenu';
+import { t } from '@/data/translations';
+import dynamic from 'next/dynamic';
+import { LanguageLinker } from '@/components/common/LanguageLinker';
+
+const MobileMenu = dynamic(() => import('./MobileMenu').then(mod => mod.MobileMenu), {
+  ssr: false, // Mobile menu is client-only interaction
+});
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -23,7 +28,7 @@ export default function Header() {
   const [isDark, setIsDark] = useState(false);
   const pathname = usePathname();
   const { user, profile, isAdmin, updateProfile, isLoading, signOut } = useAuth();
-  const { language, setLanguage, t, languages } = useLanguage();
+
 
   const navItems = [
     { name: t.nav.home, path: '/' },
@@ -36,7 +41,7 @@ export default function Header() {
     { name: t.nav.contact, path: '/contact' },
   ];
 
-  const currentLang = languages.find(l => l.code === language) || languages[0];
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -162,38 +167,6 @@ export default function Header() {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 md:gap-4">
-          {/* Language Selector */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "gap-2 px-2 hover:bg-white/10 rounded-full",
-                  textColor
-                )}
-              >
-                <Globe className="w-4 h-4" />
-                <span className="hidden sm:inline font-medium">{currentLang.flag}</span>
-                <ChevronDown className="w-3 h-3 opacity-70" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 p-2 rounded-xl shadow-xl border-border/50 backdrop-blur-xl bg-background/95">
-              {languages.map((lang) => (
-                <DropdownMenuItem
-                  key={lang.code}
-                  onClick={() => setLanguage(lang.code)}
-                  className={cn(
-                    "cursor-pointer rounded-lg px-3 py-2.5 transition-colors focus:bg-accent",
-                    language === lang.code && "bg-accent/50 text-accent-foreground font-medium"
-                  )}
-                >
-                  <span className="mr-3 text-lg">{lang.flag}</span>
-                  <span className="text-sm tracking-wide">{lang.name}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
 
           {/* Theme Toggle */}
           <Button

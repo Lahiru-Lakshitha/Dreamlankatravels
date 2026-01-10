@@ -13,12 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 import { motion } from 'framer-motion';
 
 export function QuickQuotePreview() {
   const router = useRouter();
-  const { t } = useLanguage();
+
   const [arrivalDate, setArrivalDate] = useState<Date>();
   const [departureDate, setDepartureDate] = useState<Date>();
   const [groupSize, setGroupSize] = useState('');

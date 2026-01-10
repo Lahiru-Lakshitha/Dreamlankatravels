@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Users, MapPin, Award, Star } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 
 interface StatItem {
   icon: typeof Users;
@@ -72,7 +72,7 @@ function StatCard({
 }
 
 export function StatsSection() {
-  const { t } = useLanguage();
+
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 

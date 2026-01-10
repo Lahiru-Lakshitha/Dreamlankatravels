@@ -3,7 +3,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import Link from 'next/link';
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin, ArrowRight, Award, Users, Globe, Star } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 
 const socialLinks = [
   { icon: Facebook, href: 'https://facebook.com/voyageslanka', label: 'Facebook' },
@@ -13,7 +13,7 @@ const socialLinks = [
 ];
 
 export default function Footer() {
-  const { t } = useLanguage();
+
 
   const trustBadges = [
     { icon: Award, label: t.home?.awardWinning || 'Award-Winning Tours' },

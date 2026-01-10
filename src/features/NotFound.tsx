@@ -6,12 +6,12 @@ import Image from 'next/image';
 import { useEffect } from "react";
 import { Home, ArrowLeft, Map, Compass } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 import heroImage from '@/assets/hero-sigiriya.jpg';
 
 const NotFound = () => {
   const pathname = usePathname();
-  const { t } = useLanguage();
+
 
   useEffect(() => {
     console.error("404 Error: User attempted to access non-existent route:", pathname);

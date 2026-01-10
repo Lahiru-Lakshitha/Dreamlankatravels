@@ -27,7 +27,7 @@ import { TourMap } from '@/components/tours/TourMap';
 import { FAQPreview } from '@/components/faq/FAQPreview';
 import { PageLoading } from '@/components/ui/loading-spinner';
 import { supabase } from '@/integrations/supabase/client';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 
 // Default images
 import beachImage from '@/assets/destination-beach.jpg';
@@ -229,7 +229,7 @@ const FALLBACK_PRICING: Pricing = {
 
 export default function TourDetailPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { t } = useLanguage();
+
   const [tour, setTour] = useState<Tour | null>(null);
   const [itinerary, setItinerary] = useState<Itinerary[]>([]);
   const [pricing, setPricing] = useState<Pricing | null>(null);

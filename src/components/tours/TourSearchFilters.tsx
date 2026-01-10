@@ -22,7 +22,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 
 export interface TourFilters {
   search: string;
@@ -71,7 +71,7 @@ export function TourSearchFilters({
   destinations,
   tourTypes
 }: TourSearchFiltersProps) {
-  const { t } = useLanguage();
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();

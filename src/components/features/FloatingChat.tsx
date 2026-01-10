@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from '@/data/translations';
 import { AnimatePresence, motion } from "framer-motion";
 
 interface FloatingChatProps {
@@ -14,7 +14,7 @@ interface FloatingChatProps {
 export function FloatingChat({ phoneNumber = "94771234567" }: FloatingChatProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [hasInteracted, setHasInteracted] = useState(false);
-    const { t } = useLanguage();
+
 
     // Auto-open chat after 5 seconds to invite user
     useEffect(() => {

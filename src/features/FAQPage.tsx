@@ -15,7 +15,7 @@ import {
 import { MetaTags } from '@/components/seo/MetaTags';
 import { ContentLoading } from '@/components/ui/loading-spinner';
 import { supabase } from '@/integrations/supabase/client';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 
 interface FAQEntry {
   id: string;
@@ -49,7 +49,7 @@ const FALLBACK_FAQS: FAQEntry[] = [
 ];
 
 export default function FAQPage() {
-  const { t } = useLanguage();
+
   const [faqs, setFaqs] = useState<FAQEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');

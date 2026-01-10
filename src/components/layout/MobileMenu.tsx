@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, LogOut, Sun, Moon, ArrowRight, Instagram, Facebook, Twitter, MapPin, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { t } from '@/data/translations';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -30,7 +30,7 @@ export function MobileMenu({
   onSignOut
 }: MobileMenuProps) {
   const pathname = usePathname();
-  const { t } = useLanguage();
+
 
   const navItems = [
     { name: t.nav.home, path: '/' },

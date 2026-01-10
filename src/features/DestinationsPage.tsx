@@ -94,7 +94,9 @@ export default function DestinationsPage() {
                   alt={dest.name}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 50vw"
+                  sizes={index === 0 ? "100vw" : "(max-width: 768px) 100vw, 50vw"}
+                  priority={index === 0}
+                  quality={90}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ocean-dark/90 via-ocean-dark/40 to-transparent" />
 

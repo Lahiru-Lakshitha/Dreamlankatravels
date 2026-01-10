@@ -124,26 +124,29 @@ const AnimatedSubtitle = ({
 const AnimatedCTA = ({
   text,
   link,
-  isActive
+  isActive,
+  reduceMotion
 }: {
   text: string;
   link: string;
   isActive: boolean;
+  reduceMotion: boolean;
 }) => (
   <div
-    className={`transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive
+    className={`transition-all ease-[cubic-bezier(0.22,1,0.36,1)] ${isActive || reduceMotion
       ? 'translate-y-0 opacity-100 scale-100'
       : 'translate-y-4 opacity-0 scale-95'
       }`}
     style={{
-      transitionDuration: '700ms',
-      transitionDelay: isActive ? '1000ms' : '0ms',
+      transitionDuration: reduceMotion ? '0ms' : '700ms',
+      transitionDelay: (isActive && !reduceMotion) ? '1000ms' : '0ms',
     }}
   >
     <Link href={link}>
       <Button
         size="xl"
         className="group relative overflow-hidden bg-gradient-to-r from-sunset via-sunset to-sunset-dark text-ocean-dark font-semibold rounded-full px-8 sm:px-12 py-5 sm:py-6 text-base sm:text-lg shadow-[0_10px_40px_-10px_hsl(var(--sunset)/0.5)] hover:shadow-[0_20px_60px_-10px_hsl(var(--sunset)/0.6)] transition-all duration-500 hover:-translate-y-1"
+        aria-label={text}
       >
         <span className="relative z-10 flex items-center gap-2">
           {text}
@@ -162,14 +165,17 @@ export function HeroCarousel() {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Check for reduced motion preference
+  // Check for reduced motion preference and mobile
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
+    const checkMotion = () => {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const isMobile = window.innerWidth < 768;
+      setPrefersReducedMotion(mediaQuery.matches || isMobile);
+    };
 
-    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handler);
-    return () => mediaQuery.removeEventListener('change', handler);
+    checkMotion();
+    window.addEventListener('resize', checkMotion);
+    return () => window.removeEventListener('resize', checkMotion);
   }, []);
 
   // Pause when tab is inactive
@@ -249,7 +255,9 @@ export function HeroCarousel() {
                   ? 'scale-[1.02] duration-[10000ms]'
                   : 'scale-100 duration-[800ms]'
                   }`}
-                priority
+                priority={index === 0}
+                sizes="100vw"
+                quality={90}
               />
 
               {/* Very subtle gradient overlay - preserves image vibrancy */}
@@ -281,10 +289,10 @@ export function HeroCarousel() {
                   </div>
 
                   {/* Animated Headline */}
-                  <AnimatedHeadline text={slide.headline} isActive={isActive} />
+                  <AnimatedHeadline text={slide.headline} isActive={isActive} reduceMotion={prefersReducedMotion} />
 
                   {/* Animated Subtitle */}
-                  <AnimatedSubtitle text={slide.subtitle} isActive={isActive} />
+                  <AnimatedSubtitle text={slide.subtitle} isActive={isActive} reduceMotion={prefersReducedMotion} />
 
                   {/* Animated CTA */}
                   <div className="pt-6 sm:pt-8 flex flex-col items-center gap-8">
@@ -292,6 +300,7 @@ export function HeroCarousel() {
                       text={slide.cta.text}
                       link={slide.cta.link}
                       isActive={isActive}
+                      reduceMotion={prefersReducedMotion}
                     />
 
                     {/* Hero Trust Badges - Staggered Appearance */}

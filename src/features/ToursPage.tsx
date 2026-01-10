@@ -10,15 +10,18 @@ import { PageHeroStrip } from '@/components/layout/PageHeroStrip';
 import { TourSearchFilters, TourFilters } from '@/components/tours/TourSearchFilters';
 import { TourCard } from '@/components/tours/TourCard';
 import { ContentLoading } from '@/components/ui/loading-spinner';
-import { useLanguage } from '@/contexts/LanguageContext';
-import { useTours } from '@/hooks/useTours';
+import { t } from '@/data/translations';
+import { Tour } from '@/data/tours';
 
-// Fallback static tours via hook now
+interface ToursPageProps {
+  initialTours: Tour[];
+}
 
-export default function ToursPage() {
-  const { t } = useLanguage();
-  const { tours, isLoading } = useTours();
-  const [filteredTours, setFilteredTours] = useState<any[]>([]);
+export default function ToursPage({ initialTours = [] }: ToursPageProps) {
+
+  const [tours] = useState<Tour[]>(initialTours);
+  const isLoading = false;
+  const [filteredTours, setFilteredTours] = useState<Tour[]>([]);
   const [destinations, setDestinations] = useState<string[]>([]);
   const [tourTypes, setTourTypes] = useState<string[]>([]);
 
