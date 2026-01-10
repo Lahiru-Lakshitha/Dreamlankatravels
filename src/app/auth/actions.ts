@@ -1,9 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-// import { redirect } from 'next/navigation' // Removed to allow returning typed results
 import { createClient } from '@/lib/supabase/server'
 import { AuthResult } from '@/types/auth'
+import { headers } from 'next/headers'
 
 export async function login(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
@@ -21,6 +21,7 @@ export async function login(formData: FormData): Promise<AuthResult> {
     })
 
     if (error) {
+        // Return structured error handling
         return { success: false, error: error.message }
     }
 
@@ -30,6 +31,7 @@ export async function login(formData: FormData): Promise<AuthResult> {
 
 export async function signup(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
+    const origin = headers().get('origin')
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -47,6 +49,8 @@ export async function signup(formData: FormData): Promise<AuthResult> {
             data: {
                 full_name: name || '',
             },
+            // Use origin header for dynamic redirect path in production vs local
+            emailRedirectTo: `${origin || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
         },
     })
 
@@ -58,8 +62,9 @@ export async function signup(formData: FormData): Promise<AuthResult> {
         return { success: false, error: 'Account already exists. Try logging in.' }
     }
 
-    revalidatePath('/', 'layout')
-    return { success: true, message: 'Account created successfully' }
+    // Do NOT revalidate or redirect automatically. 
+    // The user MUST check their email.
+    return { success: true, message: 'Check your email to confirm your account' }
 }
 
 export async function logout(): Promise<AuthResult> {
@@ -67,24 +72,20 @@ export async function logout(): Promise<AuthResult> {
     await supabase.auth.signOut()
 
     revalidatePath('/', 'layout')
-    // Note: Logout might still benefit from redirecting, but for consistency we return a result
-    // and let the client handle the redirect if needed. 
-    // However, usually logout happens via a button that can handle this.
-    // If the original logout function was used in a way that relied on server redirect, we might need to adjust.
-    // Given the requirement "Update ALL authentication-related Server Actions", we will return AuthResult.
     return { success: true, message: 'Logged out successfully' }
 }
 
 export async function resetPassword(formData: FormData): Promise<AuthResult> {
     const supabase = createClient()
     const email = formData.get('email') as string
+    const origin = headers().get('origin')
 
     if (!email) {
         return { success: false, error: 'Email is required' }
     }
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/update-password`,
+        redirectTo: `${origin || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback?next=/auth/update-password`,
     })
 
     if (error) {

@@ -28,6 +28,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: Error | null }>;
+  refreshSession: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -102,8 +103,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAdmin(!!data);
   };
 
+  const refreshSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setSession(session);
+    setUser(session?.user ?? null);
+    if (session?.user) {
+      fetchProfile(session.user.id);
+      checkAdminRole(session.user.id);
+    } else {
+      setProfile(null);
+      setIsAdmin(false);
+    }
+    setIsLoading(false);
+  };
+
   const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
+    const redirectUrl = `${window.location.origin}/auth/callback`;
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -124,7 +139,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
     });
-
+    if (!error) {
+      await refreshSession();
+    }
     return { error };
   };
 
@@ -132,6 +149,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setProfile(null);
     setIsAdmin(false);
+    setUser(null);
+    setSession(null);
+    window.location.href = '/'; // Force full reload to clear server caches
   };
 
   const updateProfile = async (updates: Partial<Profile>) => {
@@ -169,6 +189,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signOut,
       updateProfile,
+      refreshSession,
     }}>
       {children}
     </AuthContext.Provider>
