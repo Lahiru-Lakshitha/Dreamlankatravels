@@ -54,7 +54,7 @@ export default function HomePage({ tours }: HomePageProps) {
 
       {/* Featured Tours Section - Unified with Tours Page */}
       <section className="py-16 sm:py-24 bg-muted/30 dark:bg-background relative">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 dark:bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="flex flex-col lg:flex-row justify-between items-end mb-10 gap-6">

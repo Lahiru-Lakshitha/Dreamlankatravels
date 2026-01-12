@@ -63,9 +63,8 @@ export default async function RootLayout({
 
         <Providers initialSession={session}>
           <Layout>{children}</Layout>
+          <LanguageSwitcher />
         </Providers>
-
-        <LanguageSwitcher />
       </body>
     </html>
   );

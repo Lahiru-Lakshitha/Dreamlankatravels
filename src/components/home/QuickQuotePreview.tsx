@@ -36,47 +36,47 @@ export function QuickQuotePreview() {
       <div className="container mx-auto px-4">
 
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">
+        <div className="text-center max-w-2xl mx-auto mb-8 md:mb-10">
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-3 tracking-wide">
             {t.home?.readyToExplore || 'Craft Your Perfect Journey'}
           </h2>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-foreground/70 text-base md:text-lg font-light leading-relaxed">
             Tell us your preferences, and we will curate a bespoke Sri Lanka experience just for you.
           </p>
         </div>
 
         {/* Form Container */}
-        <div className="max-w-5xl mx-auto bg-white dark:bg-[#03140e] rounded-3xl p-6 md:p-10 shadow-xl border border-border/10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="max-w-5xl mx-auto bg-primary/5 dark:bg-primary/10 rounded-2xl p-6 md:p-8 border border-primary/10 dark:border-primary/20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
 
             {/* Date Inputs */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Arrival</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-white/80 ml-1">Arrival</label>
               <DatePicker
                 date={arrivalDate}
                 setDate={setArrivalDate}
                 placeholder="Select Date"
                 minDate={new Date()}
-                className='h-12'
+                className='h-11 border-primary/10 focus:border-primary/30 bg-white/50 dark:bg-black/20 text-sm'
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Departure</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-white/80 ml-1">Departure</label>
               <DatePicker
                 date={departureDate}
                 setDate={setDepartureDate}
                 placeholder="Select Date"
                 minDate={arrivalDate || new Date()}
-                className='h-12'
+                className='h-11 border-primary/10 focus:border-primary/30 bg-white/50 dark:bg-black/20 text-sm'
               />
             </div>
 
             {/* Selects */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Travelers</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-white/80 ml-1">Travelers</label>
               <Select value={groupSize} onValueChange={setGroupSize}>
-                <SelectTrigger className="h-12 rounded-xl bg-muted/10 border-border/50">
+                <SelectTrigger className="h-11 rounded-md bg-white/50 dark:bg-black/20 border-primary/10 focus:ring-primary/20 text-sm">
                   <SelectValue placeholder="Group Size" />
                 </SelectTrigger>
                 <SelectContent>
@@ -88,10 +88,10 @@ export function QuickQuotePreview() {
               </Select>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1">Style</label>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-white/80 ml-1">Style</label>
               <Select value={tourStyle} onValueChange={setTourStyle}>
-                <SelectTrigger className="h-12 rounded-xl bg-muted/10 border-border/50">
+                <SelectTrigger className="h-11 rounded-md bg-white/50 dark:bg-black/20 border-primary/10 focus:ring-primary/20 text-sm">
                   <SelectValue placeholder="Preference" />
                 </SelectTrigger>
                 <SelectContent>
@@ -109,9 +109,9 @@ export function QuickQuotePreview() {
             <Button
               onClick={handleGetQuote}
               size="lg"
-              className="w-full md:w-auto min-w-[240px] h-14 rounded-full text-lg font-bold bg-primary hover:bg-primary-hover text-white shadow-lg transition-transform hover:scale-[1.02]"
+              className="w-full md:w-auto min-w-[200px] h-12 rounded-full text-base font-semibold bg-primary text-white hover:bg-primary-hover shadow-sm hover:shadow-md transition-all duration-300"
             >
-              Get My Free Quote <ArrowRight className="ml-2 w-5 h-5" />
+              Get My Free Quote <ArrowRight className="ml-2 w-4 h-4" />
             </Button>
           </div>
         </div>

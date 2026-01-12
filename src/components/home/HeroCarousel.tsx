@@ -126,12 +126,12 @@ function HeroCarouselBase() {
                   <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-4 leading-tight drop-shadow-md">
                     {slide.title}
                   </h1>
-                  <p className="text-lg md:text-xl text-white/90 font-light max-w-2xl mx-auto mb-8 leading-relaxed drop-shadow-sm">
+                  <p className="text-lg md:text-xl text-white/90 font-light max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed drop-shadow-sm">
                     {slide.subtitle}
                   </p>
-                  <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                     <Link href={slide.link}>
-                      <Button size="lg" className="w-full sm:w-auto rounded-full px-8 h-12 bg-white text-primary hover:bg-white/90 transition-transform hover:scale-105 shadow-xl font-semibold">
+                      <Button size="lg" className="w-full sm:w-auto rounded-full px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base bg-white text-primary hover:bg-white/90 transition-transform hover:scale-105 shadow-xl font-semibold">
                         Explore Tours
                       </Button>
                     </Link>
@@ -139,7 +139,7 @@ function HeroCarouselBase() {
                       <Button
                         size="lg"
                         variant="outline"
-                        className="w-full sm:w-auto rounded-full px-8 h-12 border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary backdrop-blur-sm transition-all hover:scale-105 font-semibold shadow-lg"
+                        className="w-full sm:w-auto rounded-full px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base border-2 border-white bg-transparent text-white hover:bg-white hover:text-primary backdrop-blur-sm transition-all hover:scale-105 font-semibold shadow-lg"
                       >
                         Start Planning
                       </Button>
@@ -155,18 +155,18 @@ function HeroCarouselBase() {
       {/* Navigation Controls - Premium Glass Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg group/nav focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg group/nav focus:outline-none focus:ring-2 focus:ring-white/50"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="w-6 h-6 transition-transform group-hover/nav:-translate-x-0.5" />
+        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover/nav:-translate-x-0.5" />
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg group/nav focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg group/nav focus:outline-none focus:ring-2 focus:ring-white/50"
         aria-label="Next slide"
       >
-        <ChevronRight className="w-6 h-6 transition-transform group-hover/nav:translate-x-0.5" />
+        <ChevronRight className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover/nav:translate-x-0.5" />
       </button>
 
       {/* Progress Indicators */}
@@ -176,8 +176,8 @@ function HeroCarouselBase() {
             key={index}
             onClick={() => handleDotClick(index)}
             className={`h-1.5 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 ${current === index
-                ? 'w-8 bg-white shadow-lg'
-                : 'w-2 bg-white/40 hover:bg-white/80 hover:w-6'
+              ? 'w-8 bg-white shadow-lg'
+              : 'w-2 bg-white/40 hover:bg-white/80 hover:w-6'
               }`}
             aria-label={`Go to slide ${index + 1}`}
           />

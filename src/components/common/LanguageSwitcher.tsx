@@ -1,43 +1,15 @@
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
-import Script from 'next/script';
-
-const languages = [
-  { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'ar', label: 'العربية', flag: '🇸🇦' },
-  { code: 'zh-CN', label: '中文', flag: '🇨🇳' },
-  { code: 'nl', label: 'Nederlands', flag: '🇳🇱' },
-  { code: 'fr', label: 'Français', flag: '🇫🇷' },
-  { code: 'de', label: 'Deutsch', flag: '🇩🇪' },
-  { code: 'it', label: 'Italiano', flag: '🇮🇹' },
-  { code: 'pt', label: 'Português', flag: '🇵🇹' },
-  { code: 'ru', label: 'Русский', flag: '🇷🇺' },
-  { code: 'es', label: 'Español', flag: '🇪🇸' },
-];
+import { useState, useRef, useEffect } from 'react';
+import { useLanguage } from '@/components/providers/LanguageProvider';
+import { LANGUAGES } from '@/lib/language-utils';
 
 export default function LanguageSwitcher() {
-  const [currentLang, setCurrentLang] = useState('en');
+  const { currentLang, changeLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const switcherRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Read current language from cookie
-    const cookies = document.cookie.split(';');
-    const googtrans = cookies.find(c => c.trim().startsWith('googtrans='));
-    if (googtrans) {
-      const lang = googtrans.split('/').pop();
-      if (lang) {
-        setCurrentLang(lang);
-        // Handle RTL for Arabic
-        if (lang === 'ar') {
-          document.documentElement.setAttribute('dir', 'rtl');
-        } else {
-          document.documentElement.setAttribute('dir', 'ltr');
-        }
-      }
-    }
-
     // Close menu on click outside
     function handleClickOutside(event: MouseEvent) {
       if (switcherRef.current && !switcherRef.current.contains(event.target as Node)) {
@@ -48,21 +20,10 @@ export default function LanguageSwitcher() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleLanguageChange = (langCode: string) => {
-    // Set cookies for Google Translate
-    document.cookie = `googtrans=/en/${langCode};path=/;domain=${window.location.hostname}`;
-    document.cookie = `googtrans=/en/${langCode};path=/`;
-
-    // Reload to apply
-    window.location.reload();
-  };
-
-  const currentLabel = languages.find(l => l.code === currentLang)?.code.toUpperCase() || 'EN';
+  const currentLabel = LANGUAGES.find(l => l.code === currentLang)?.code.toUpperCase() || 'EN';
 
   return (
     <>
-      <div id="google_translate_element" style={{ display: 'none' }}></div>
-
       <div id="lang-switcher" ref={switcherRef} className="notranslate">
         <button
           id="lang-btn"
@@ -73,12 +34,12 @@ export default function LanguageSwitcher() {
         </button>
 
         <ul id="lang-menu" className={isOpen ? 'open' : ''}>
-          {languages.map((lang) => (
+          {LANGUAGES.map((lang) => (
             <li
               key={lang.code}
               data-lang={lang.code}
               onClick={() => {
-                handleLanguageChange(lang.code);
+                changeLanguage(lang.code);
                 setIsOpen(false);
               }}
             >
@@ -194,24 +155,6 @@ export default function LanguageSwitcher() {
                     top: 0 !important;
                 }
             `}</style>
-
-      <Script
-        id="google-translate-init"
-        strategy="afterInteractive"
-      >
-        {`
-                    function googleTranslateElementInit() {
-                        new google.translate.TranslateElement(
-                            { pageLanguage: 'en', autoDisplay: false },
-                            document.getElementById('google_translate_element')
-                        );
-                    }
-                `}
-      </Script>
-      <Script
-        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-        strategy="afterInteractive"
-      />
     </>
   );
 }

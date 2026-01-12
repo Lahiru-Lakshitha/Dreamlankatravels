@@ -46,8 +46,12 @@ export default function BlogPage() {
   }, []);
 
   const fetchData = async () => {
+    // Only reset error if we are retrying manually, not initial load
+    // But since this is called on mount, we want to clear any persistent state if meaningful
     setError(null);
+
     try {
+      // Execute fetches in parallel but handle errors individually
       const [postsRes, categoriesRes] = await Promise.all([
         supabase
           .from('blog_posts')
@@ -57,18 +61,32 @@ export default function BlogPage() {
         supabase.from('blog_categories').select('*').order('name'),
       ]);
 
-      if (postsRes.error) throw postsRes.error;
-      if (categoriesRes.error) throw categoriesRes.error;
+      // Handle Posts Response
+      if (postsRes.error) {
+        console.error('Error fetching posts:', postsRes.error);
+        throw new Error(postsRes.error.message);
+      }
 
+      // Handle Categories Response (Fail Soft - don't block page if categories fail)
+      if (categoriesRes.error) {
+        console.warn('Error fetching categories:', categoriesRes.error);
+      }
+
+      // Safe Data Assignment
       setPosts(postsRes.data || []);
       setCategories(categoriesRes.data || []);
+
     } catch (err) {
-      setError('Failed to load blog posts. Please try again.');
-      toast({
-        title: 'Error',
-        description: 'Failed to load blog posts.',
-        variant: 'destructive',
-      });
+      console.error('Blog fetch failed:', err);
+      // Only set user-facing error if we mostly failed to get content
+      setError('Failed to load blog posts. Please refresh or try again.');
+
+      // Optional: Don't show toast immediately on first load to prevent aggressive UI
+      // toast({
+      //   title: 'Connection Issue',
+      //   description: 'Could not load updated blog posts.',
+      //   variant: 'destructive',
+      // });
     } finally {
       setLoading(false);
     }

@@ -42,7 +42,7 @@ export function DestinationsGrid() {
     ];
 
     return (
-        <section className="py-12 bg-background relative">
+        <section className="py-12 bg-background relative z-20">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-10 max-w-3xl mx-auto">
                     <span className="text-sunset font-serif italic text-lg tracking-wider">
@@ -93,7 +93,7 @@ export function DestinationsGrid() {
 
                 <div className="text-center mt-10">
                     <Link href="/destinations">
-                        <Button variant="outline" size="lg" className="rounded-full px-8 hover:bg-ocean hover:text-white transition-colors border-2">
+                        <Button variant="outline" size="lg" className="rounded-full px-8 hover:bg-ocean hover:text-white transition-colors border-2 cursor-pointer relative z-10 touch-manipulation">
                             {t.home.viewAllDestinations}
                         </Button>
                     </Link>
