@@ -1,9 +1,9 @@
 "use client";
+import { useState, useEffect, useRef, memo } from 'react';
 import Image from "next/image";
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, Moon, Sun, Globe, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, Moon, Sun, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -16,62 +16,48 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { t } from '@/data/translations';
 import dynamic from 'next/dynamic';
-import { LanguageLinker } from '@/components/common/LanguageLinker';
+import { NavMenu } from './NavMenu';
 
 const MobileMenu = dynamic(() => import('./MobileMenu').then(mod => mod.MobileMenu), {
-  ssr: false, // Mobile menu is client-only interaction
+  ssr: false,
 });
 
-export default function Header() {
+function HeaderBase() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const pathname = usePathname();
-  const { user, profile, isAdmin, updateProfile, isLoading, signOut } = useAuth();
+  const { user, profile, isAdmin, isLoading, signOut, updateProfile } = useAuth();
 
-
-  const navItems = [
-    { name: t.nav.home, path: '/' },
-    { name: t.nav.destinations, path: '/destinations' },
-    { name: t.nav.tours, path: '/tours' },
-    { name: t.home?.planYourJourney || 'Plan Trip', path: '/trip-planner' },
-    { name: t.nav.about, path: '/about' },
-    { name: t.nav.blog, path: '/blog' },
-    { name: "FAQ", path: "/faq" },
-    { name: t.nav.contact, path: '/contact' },
-  ];
-
-
+  // Sentinel for IntersectionObserver (High Performance Scroll Spy)
+  // When this pixel is visible, we are at the top. When hidden, we are scrolled.
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    // 60fps Scroll Detection without Event Listeners
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsScrolled(!entry.isIntersecting);
+    }, {
+      root: null,
+      threshold: 0,
+      rootMargin: "0px"
+    });
+
+    const currentSentinel = sentinelRef.current;
+    if (currentSentinel) {
+      observer.observe(currentSentinel);
+    }
+
+    return () => {
+      if (currentSentinel) observer.unobserve(currentSentinel);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Disable body scroll when mobile menu is open
+  // Theme Logic
   useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isMobileMenuOpen]);
-
-  useEffect(() => {
-    // Check profile dark mode preference first, then localStorage
     if (profile) {
       setIsDark(profile.dark_mode);
-      if (profile.dark_mode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      document.documentElement.classList.toggle('dark', profile.dark_mode);
     } else {
       const savedTheme = localStorage.getItem('theme');
       if (savedTheme === 'dark') {
@@ -84,16 +70,9 @@ export default function Header() {
   const toggleTheme = async () => {
     const newDarkMode = !isDark;
     setIsDark(newDarkMode);
+    document.documentElement.classList.toggle('dark', newDarkMode);
+    localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
 
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-
-    // Save to database if logged in
     if (user && updateProfile) {
       await updateProfile({ dark_mode: newDarkMode });
     }
@@ -105,180 +84,159 @@ export default function Header() {
   };
 
   const isHome = pathname === '/';
-  // Premium Header Logic: Transparent initially on Home, Glass/Solid on scroll or other pages
-  const headerBg = isScrolled || !isHome
-    ? 'bg-background/80 dark:bg-black/60 backdrop-blur-md shadow-soft border-b border-border/10 dark:border-white/5'
-    : 'bg-transparent';
 
-  const textColor = isScrolled || !isHome ? "text-foreground" : "text-white";
-  const hoverColor = isScrolled || !isHome ? "hover:text-primary" : "hover:text-white/80";
+  // -- Strict Performance & Design Logic --
+  // NO Height Animations (Layout Shift). Use fixed height.
+  // We use standard h-20 (80px) which is elegant.
+  const headerHeight = "h-20 lg:h-24";
+
+  // Background State
+  const backgroundClass = isScrolled || !isHome
+    ? "bg-white/90 dark:bg-[#03140e]/90 backdrop-blur-xl shadow-soft dark:shadow-none border-b border-black/5 dark:border-white/10"
+    : "bg-transparent";
+
+  // Logo Logic: Scale transform instead of width change
+  const logoScale = isScrolled || !isHome ? "scale-90" : "scale-100";
+  const logoBrightness = isScrolled || !isHome
+    ? "brightness-100"
+    : "brightness-0 invert drop-shadow-lg";
+
+  const iconColor = isScrolled || !isHome ? "text-foreground" : "text-white";
 
   return (
-    <header
-      className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
-        headerBg,
-        isScrolled ? "h-20" : "h-24 md:h-28" // Taller initial state for premium feel
-      )}
-    >
-      <div className="container mx-auto px-4 h-full flex items-center justify-between">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-3 relative group">
-          <div className={cn(
-            "transition-all duration-500 ease-in-out",
-            isScrolled ? "w-32 md:w-40" : "w-40 md:w-52"
-          )}>
-            <Image
-              src="/logo.png"
-              alt="Dream Lanka Travels Logo"
-              width={280}
-              height={80}
-              priority
-              className={cn(
-                "w-full h-auto object-contain transition-all duration-500",
-                // Invert logic: On Home (top), logo should be white (inverted) if the logo image is dark by default.
-                // Assuming logo.png is dark text.
-                isScrolled || !isHome ? "brightness-100" : "brightness-0 invert drop-shadow-md"
-              )}
-            />
-          </div>
-        </Link>
+    <>
+      {/* Sentinel Pixel - Anchored to document flow via relative Layout parent */}
+      <div
+        ref={sentinelRef}
+        className="absolute top-0 left-0 w-full h-px bg-transparent pointer-events-none -z-10"
+        aria-hidden="true"
+      />
 
-        {/* Desktop Navigation - Centered & Elegant */}
-        <nav className="hidden lg:flex items-center gap-8 md:gap-10">
-          {navItems.map((item) => (
-            <Link
-              key={item.path}
-              href={item.path}
-              className={cn(
-                "text-sm uppercase tracking-widest font-medium transition-all duration-300 relative group py-2",
-                textColor,
-                pathname === item.path ? "text-primary font-semibold" : ""
-              )}
-            >
-              {item.name}
-              <span className={cn(
-                "absolute bottom-0 left-0 w-0 h-[1px] bg-primary transition-all duration-300 group-hover:w-full",
-                isScrolled || !isHome ? "bg-primary" : "bg-white"
-              )} />
-            </Link>
-          ))}
-        </nav>
+      <header
+        className={cn(
+          'fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ease-in-out',
+          headerHeight,
+          backgroundClass
+        )}
+      >
+        <div className="container mx-auto px-4 h-full flex items-center justify-between">
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-2 md:gap-4">
-
-          {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className={cn(
-              "rounded-full hover:bg-white/10 w-9 h-9 transition-transform hover:rotate-12",
-              textColor
-            )}
-          >
-            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          </Button>
-
-          {/* User Menu or Login */}
-          {isLoading ? (
-            <div className="w-8 h-8 rounded-full bg-white/10 animate-pulse" />
-          ) : user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "gap-2 px-2 hover:bg-white/10 rounded-full",
-                    textColor
-                  )}
-                >
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-current">
-                    <User className="w-4 h-4" />
-                  </div>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl shadow-xl border-border/50 backdrop-blur-xl bg-background/95">
-                <div className="px-3 py-2 border-b border-border/50 mb-2">
-                  <p className="text-sm font-semibold truncate">{profile?.full_name || 'Traveler'}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                </div>
-
-                <DropdownMenuItem asChild>
-                  <Link href="/dashboard" className="cursor-pointer rounded-lg px-3 py-2.5">
-                    <LayoutDashboard className="w-4 h-4 mr-3" />
-                    {t.nav.myDashboard}
-                  </Link>
-                </DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin" className="cursor-pointer rounded-lg px-3 py-2.5">
-                      <LayoutDashboard className="w-4 h-4 mr-3" />
-                      {t.nav.adminPanel}
-                    </Link>
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuSeparator className="my-1 bg-border/50" />
-                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive focus:bg-destructive/10 rounded-lg px-3 py-2.5">
-                  <LogOut className="w-4 h-4 mr-3" />
-                  {t.nav.signOut}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Link href="/auth" className="hidden sm:block">
-              <Button
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "font-medium tracking-wide hover:bg-white/10 rounded-full px-4",
-                  textColor
-                )}
-              >
-                {t.nav.signIn}
-              </Button>
-            </Link>
-          )}
-
-          {/* CTA Button - Premium Style */}
-          <Link href="/quote" className="hidden md:block ml-2">
-            <Button
-              variant={isScrolled || !isHome ? "ocean" : "hero"} // Use 'hero' variant when on top of hero image
-              size="lg" // Larger button
-              className="rounded-full px-6 shadow-lg hover:shadow-xl transition-all hover:scale-105"
-            >
-              {t.nav.getQuote}
-            </Button>
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 relative z-50 group">
+            <div className={cn(
+              "relative transition-all duration-500 ease-out origin-left",
+              logoScale
+            )}>
+              <div className={cn("w-32 md:w-48 transition-all duration-500", logoBrightness)}>
+                <Image
+                  src="/logo.png"
+                  alt="Dream Lanka Travels"
+                  width={200}
+                  height={60}
+                  priority
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+            </div>
           </Link>
 
-          {/* Mobile Menu Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "lg:hidden rounded-full hover:bg-white/10",
-              textColor
-            )}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Open menu"
-          >
-            <Menu className="w-6 h-6" />
-          </Button>
-        </div>
-      </div>
+          {/* Desktop Nav - Pure CSS */}
+          <NavMenu isScrolled={isScrolled} isHome={isHome} />
 
-      {/* Mobile Menu - Rendered via Portal */}
-      <MobileMenu
-        isOpen={isMobileMenuOpen}
-        onClose={() => setIsMobileMenuOpen(false)}
-        user={user}
-        isAdmin={isAdmin}
-        isDark={isDark}
-        onToggleTheme={toggleTheme}
-        onSignOut={handleSignOut}
-      />
-    </header>
+          {/* Right Actions */}
+          <div className="flex items-center gap-1 md:gap-3">
+
+            {/* Theme Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              className={cn(
+                "rounded-full w-9 h-9 transition-transform hover:rotate-12 hover:bg-white/20",
+                iconColor
+              )}
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
+
+            {/* Auth Menu */}
+            {isLoading ? (
+              <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse" />
+            ) : user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className={cn("rounded-full px-2 gap-2 hover:bg-white/20", iconColor)}>
+                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-current">
+                      <User className="w-4 h-4" />
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-xl backdrop-blur-xl bg-background/95 border-border/50">
+                  <div className="px-3 py-2 border-b border-border/50">
+                    <p className="text-sm font-semibold truncate">{profile?.full_name || 'Traveler'}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                  </div>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="cursor-pointer py-2.5"><LayoutDashboard className="w-4 h-4 mr-2" /> {t.nav.myDashboard}</Link>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer py-2.5"><LayoutDashboard className="w-4 h-4 mr-2" /> Admin</Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:bg-destructive/10 cursor-pointer py-2.5">
+                    <LogOut className="w-4 h-4 mr-2" /> {t.nav.signOut}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/auth" className="hidden sm:block">
+                <Button variant="ghost" size="sm" className={cn("rounded-full px-4 hover:bg-white/20", iconColor)}>
+                  {t.nav.signIn}
+                </Button>
+              </Link>
+            )}
+
+            {/* CTA Button */}
+            <Link href="/quote" className="hidden md:block ml-2">
+              <Button
+                className={cn(
+                  "rounded-full px-6 shadow-lg transition-all hover:scale-105 hover:shadow-xl",
+                  isScrolled || !isHome
+                    ? "bg-primary hover:bg-primary-hover text-white dark:bg-primary dark:text-white"
+                    : "bg-white text-primary hover:bg-white/90"
+                )}
+              >
+                {t.nav.getQuote}
+              </Button>
+            </Link>
+
+            {/* Mobile Toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn("lg:hidden rounded-full hover:bg-white/20", iconColor)}
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu className="w-6 h-6" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Mobile Menu Portal */}
+        <MobileMenu
+          isOpen={isMobileMenuOpen}
+          onClose={() => setIsMobileMenuOpen(false)}
+          user={user}
+          isAdmin={isAdmin}
+          isDark={isDark}
+          onToggleTheme={toggleTheme}
+          onSignOut={handleSignOut}
+        />
+      </header>
+    </>
   );
 }
+
+export default memo(HeaderBase);

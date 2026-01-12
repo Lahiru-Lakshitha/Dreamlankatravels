@@ -3,6 +3,8 @@ import { Playfair_Display, Outfit } from "next/font/google"; // Premium fonts
 import "@/index.css";
 import Layout from "@/components/layout/Layout";
 import { Providers } from "./providers";
+import Script from "next/script";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -62,6 +64,8 @@ export default async function RootLayout({
         <Providers initialSession={session}>
           <Layout>{children}</Layout>
         </Providers>
+
+        <LanguageSwitcher />
       </body>
     </html>
   );

@@ -46,10 +46,8 @@ export default function HomePage({ tours }: HomePageProps) {
       {/* Hero Carousel - Dynamic with Placeholder */}
       <HeroCarousel />
 
-      {/* Quick Quote Floating Section */}
-      <div className="-mt-20 relative z-20 container mx-auto px-4 mb-20">
-        <QuickQuotePreview />
-      </div>
+      {/* Quick Quote Section */}
+      <QuickQuotePreview />
 
       {/* Destinations Section - Extracted & Dynamic */}
       <DestinationsGrid />
