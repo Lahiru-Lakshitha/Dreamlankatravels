@@ -127,36 +127,33 @@ export async function submitQuoteRequest(formData: FormData): Promise<{ error?: 
     }
 
     const data = validatedFields.data;
+    const firstName = data.fullName.split(' ')[0];
 
+    // 1. Send Customer Confirmation Email (Required Priority)
+    const customerEmailResult = await sendEmail({
+        to: data.email,
+        subject: "Your Sri Lanka Journey Request Has Been Received 🌿",
+        html: `
+      <div style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px;">
+        <p>Hi ${firstName},</p>
+        
+        <p>Thank you for reaching out to Dream Lanka Travels.</p>
+        
+        <p>We’ve received your request for a personalized Sri Lanka experience.<br>
+        One of our travel designers is now reviewing your preferences and will contact you shortly with a bespoke proposal.</p>
+        
+        <p>If you’d like faster assistance, you can reach us directly on WhatsApp.</p>
+        
+        <br>
+        <p>Warm regards,<br>
+        <strong>Dream Lanka Travels</strong><br>
+        <span style="color: #666; font-size: 0.9em;">Luxury Travel Designers</span></p>
+      </div>
+    `,
+    });
 
-    // 1. Save to Supabase (Optional helper, wrapped in try/catch to not block flow)
-    try {
-        const { error: dbError } = await supabase
-            .from("quotes")
-            .insert([
-                {
-                    full_name: data.fullName,
-                    email: data.email,
-                    phone: data.phone,
-                    country: data.country,
-                    travel_start_date: data.startDate,
-                    travel_end_date: data.endDate,
-                    travelers: parseInt(data.travelers) || 1,
-                    budget_range: data.budget,
-                    tour_type: data.tourType,
-                    destinations: data.destinations && data.destinations.length > 0 ? data.destinations : null,
-                    special_requests: data.specialRequests || null,
-                    status: "pending", // Use 'pending' to match DB constraints
-                },
-            ]);
-
-        if (dbError) console.error("Database Error (Quote):", dbError);
-    } catch (e) {
-        console.error("Supabase operation failed", e);
-    }
-
-    // 2. Send Admin Notification (Admin Email)
-    await sendEmail({
+    // 2. Send Admin Notification (Required Priority)
+    const adminEmailResult = await sendEmail({
         to: process.env.ADMIN_NOTIFICATION_EMAIL || "lahirulakshithamax00@gmail.com",
         replyTo: data.email, // Allow admin to reply directly to customer
         subject: `New Lead: ${data.fullName} - ${data.tourType}`,
@@ -184,30 +181,39 @@ export async function submitQuoteRequest(formData: FormData): Promise<{ error?: 
     `,
     });
 
-    // 3. Send Customer Confirmation Email (Required)
-    // "Your Sri Lanka Journey Request Has Been Received 🌿"
-    const firstName = data.fullName.split(' ')[0];
-    await sendEmail({
-        to: data.email,
-        subject: "Your Sri Lanka Journey Request Has Been Received 🌿",
-        html: `
-      <div style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px;">
-        <p>Hi ${firstName},</p>
-        
-        <p>Thank you for reaching out to Dream Lanka Travels.</p>
-        
-        <p>We’ve received your request for a personalized Sri Lanka experience.<br>
-        One of our travel designers is now reviewing your preferences and will contact you shortly with a bespoke proposal.</p>
-        
-        <p>If you’d like faster assistance, you can reach us directly on WhatsApp.</p>
-        
-        <br>
-        <p>Warm regards,<br>
-        <strong>Dream Lanka Travels</strong><br>
-        <span style="color: #666; font-size: 0.9em;">Luxury Travel Designers</span></p>
-      </div>
-    `,
-    });
+    // 3. Check for Email Failures
+    if (!customerEmailResult.success || !adminEmailResult.success) {
+        console.error("Email Sending Failed:", { customer: customerEmailResult, admin: adminEmailResult });
+        return { error: "Failed to submit quote request. Please try again." };
+    }
+
+    // 4. Save to Supabase (Non-blocking)
+    try {
+        const { error: dbError } = await supabase
+            .from("quotes")
+            .insert([
+                {
+                    full_name: data.fullName,
+                    email: data.email,
+                    phone: data.phone,
+                    country: data.country,
+                    travel_start_date: data.startDate,
+                    travel_end_date: data.endDate,
+                    travelers: parseInt(data.travelers) || 1,
+                    budget_range: data.budget,
+                    tour_type: data.tourType,
+                    destinations: data.destinations && data.destinations.length > 0 ? data.destinations : null,
+                    special_requests: data.specialRequests || null,
+                    status: "pending",
+                },
+            ]);
+
+        if (dbError) {
+            console.error("Database Error (Quote Insert):", dbError);
+        }
+    } catch (e) {
+        console.error("Supabase operation exception:", e);
+    }
 
     return { success: true, message: "Quote request submitted successfully!" };
 }
