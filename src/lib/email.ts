@@ -7,9 +7,10 @@ interface SendEmailParams {
     subject: string;
     html: string;
     from?: string; // Optional, defaults to env var or fallback
+    replyTo?: string; // Optional reply-to address
 }
 
-export async function sendEmail({ to, subject, html, from }: SendEmailParams) {
+export async function sendEmail({ to, subject, html, from, replyTo }: SendEmailParams) {
     try {
         const fromEmail = from || process.env.EMAIL_FROM || 'Dream Lanka Travels <noreply@dreamlankatravels.com>';
 
@@ -23,6 +24,7 @@ export async function sendEmail({ to, subject, html, from }: SendEmailParams) {
             to,
             subject,
             html,
+            replyTo: replyTo,
         });
 
         if (error) {

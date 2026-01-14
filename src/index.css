@@ -158,7 +158,8 @@
   /* 
     Prevent page jump on focus
   */
-  html, body {
+  html,
+  body {
     scroll-behavior: auto !important;
   }
 

@@ -94,7 +94,7 @@ export async function submitContactForm(formData: FormData) {
     return { success: true, message: "Message sent successfully!" };
 }
 
-export async function submitQuoteRequest(formData: FormData) {
+export async function submitQuoteRequest(formData: FormData): Promise<{ error?: string | Record<string, string[]>; success?: boolean; message?: string }> {
     // Extract destinations manually if it's sent as a separate field or JSON
     const destinationsRaw = formData.get("destinations");
     let destinations: string[] = [];
@@ -129,63 +129,83 @@ export async function submitQuoteRequest(formData: FormData) {
     const data = validatedFields.data;
 
 
-    // 1. Save to Supabase
-    const { error: dbError } = await supabase
-        .from("quotes")
-        .insert([
-            {
-                full_name: data.fullName,
-                email: data.email,
-                phone: data.phone,
-                country: data.country,
-                travel_start_date: data.startDate,
-                travel_end_date: data.endDate,
-                travelers: parseInt(data.travelers) || 1,
-                budget_range: data.budget,
-                tour_type: data.tourType,
-                destinations: data.destinations && data.destinations.length > 0 ? data.destinations : null,
-                special_requests: data.specialRequests || null,
-                status: "pending",
-            },
-        ]);
+    // 1. Save to Supabase (Optional helper, wrapped in try/catch to not block flow)
+    try {
+        const { error: dbError } = await supabase
+            .from("quotes")
+            .insert([
+                {
+                    full_name: data.fullName,
+                    email: data.email,
+                    phone: data.phone,
+                    country: data.country,
+                    travel_start_date: data.startDate,
+                    travel_end_date: data.endDate,
+                    travelers: parseInt(data.travelers) || 1,
+                    budget_range: data.budget,
+                    tour_type: data.tourType,
+                    destinations: data.destinations && data.destinations.length > 0 ? data.destinations : null,
+                    special_requests: data.specialRequests || null,
+                    status: "pending", // Use 'pending' to match DB constraints
+                },
+            ]);
 
-    if (dbError) {
-        console.error("Database Error (Quote):", dbError);
-        return { error: "Failed to save request. Please try again." };
+        if (dbError) console.error("Database Error (Quote):", dbError);
+    } catch (e) {
+        console.error("Supabase operation failed", e);
     }
 
-    // 2. Send Admin Notification
+    // 2. Send Admin Notification (Admin Email)
     await sendEmail({
-        to: process.env.EMAIL_FROM || "admin@example.com",
-        subject: `New Quote Request: ${data.fullName}`,
+        to: process.env.EMAIL_FROM || "admin@dreamlankatravels.com", // Ensure receiving address
+        replyTo: data.email, // Allow admin to reply directly to customer
+        subject: `New Lead: ${data.fullName} - ${data.tourType}`,
         html: `
-      <h1>New Quote Request</h1>
-      <h2>Traveler Details</h2>
-      <p><strong>Name:</strong> ${data.fullName}</p>
-      <p><strong>Email:</strong> ${data.email}</p>
-      <p><strong>Phone:</strong> ${data.phone}</p>
-      <p><strong>Country:</strong> ${data.country}</p>
-      
-      <h2>Trip Details</h2>
-      <p><strong>Dates:</strong> ${data.startDate} to ${data.endDate}</p>
-      <p><strong>Travelers:</strong> ${data.travelers}</p>
-      <p><strong>Budget:</strong> ${data.budget}</p>
-      <p><strong>Type:</strong> ${data.tourType}</p>
-      <p><strong>Destinations:</strong> ${data.destinations?.join(", ") || "None specified"}</p>
-      
-      <h2>Special Requests</h2>
-      <p>${data.specialRequests || "None"}</p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; color: #333;">
+        <h2 style="color: #0F3D2E;">New Quote Request</h2>
+        <p><strong>Submission Time:</strong> ${new Date().toLocaleString()}</p>
+        
+        <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px;">Traveler Details</h3>
+        <p><strong>Name:</strong> ${data.fullName}</p>
+        <p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>
+        <p><strong>Phone:</strong> ${data.phone}</p>
+        <p><strong>Country:</strong> ${data.country}</p>
+        
+        <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px;">Trip Details</h3>
+        <p><strong>Dates:</strong> ${data.startDate} to ${data.endDate}</p>
+        <p><strong>Travelers:</strong> ${data.travelers}</p>
+        <p><strong>Budget:</strong> ${data.budget}</p>
+        <p><strong>Type:</strong> ${data.tourType}</p>
+        <p><strong>Destinations:</strong> ${data.destinations?.join(", ") || "None specified"}</p>
+        
+        <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px;">Special Requests</h3>
+        <p style="background: #f9f9f9; padding: 10px; border-radius: 5px;">${data.specialRequests || "None provided"}</p>
+      </div>
     `,
     });
 
-    // 3. Send User Confirmation
+    // 3. Send Customer Confirmation Email (Required)
+    // "Your Sri Lanka Journey Request Has Been Received 🌿"
+    const firstName = data.fullName.split(' ')[0];
     await sendEmail({
         to: data.email,
-        subject: "We received your quote request! - Dream Lanka Travels",
+        subject: "Your Sri Lanka Journey Request Has Been Received 🌿",
         html: `
-      <h1>Thank you for reaching out, ${data.fullName}!</h1>
-      <p>We have received your request for a custom quote. Our travel experts are reviewing your details and will get back to you within 24 hours with a personalized itinerary.</p>
-      <p>Safe travels,<br>The Dream Lanka Travels Team</p>
+      <div style="font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px;">
+        <p>Hi ${firstName},</p>
+        
+        <p>Thank you for reaching out to Dream Lanka Travels.</p>
+        
+        <p>We’ve received your request for a personalized Sri Lanka experience.<br>
+        One of our travel designers is now reviewing your preferences and will contact you shortly with a bespoke proposal.</p>
+        
+        <p>If you’d like faster assistance, you can reach us directly on WhatsApp.</p>
+        
+        <br>
+        <p>Warm regards,<br>
+        <strong>Dream Lanka Travels</strong><br>
+        <span style="color: #666; font-size: 0.9em;">Luxury Travel Designers</span></p>
+      </div>
     `,
     });
 

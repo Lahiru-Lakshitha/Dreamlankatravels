@@ -24,7 +24,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-// import { useAuth } from '@/contexts/AuthContext'; // Removed
 import { t } from '@/data/translations';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -72,7 +71,6 @@ export default function QuotePage() {
   const searchParams = useSearchParams();
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  // const { user, profile } = useAuth(); // Removed
 
   const { toast } = useToast();
 
@@ -183,29 +181,46 @@ export default function QuotePage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen pt-20 flex items-center justify-center bg-[hsl(var(--quote-bg))]">
+      <div className="min-h-screen pt-20 flex items-center justify-center bg-background">
         <MetaTags
           title={t.quote.submitSuccess}
           description={t.quote.submitSuccessDesc}
         />
         <div className="text-center max-w-md mx-auto px-4 animate-fade-up">
-          <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-            <CheckCircle className="w-12 h-12 text-primary" />
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-green-100 flex items-center justify-center">
+            <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-4">
-            {t.quote.thankYou}
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">
+            Request Submitted Successfully
           </h1>
-          <p className="text-muted-foreground mb-8">
-            {t.quote.thankYouDesc}
+          <p className="text-muted-foreground mb-8 text-lg font-light">
+            Thank you! We have received your request and will be in touch shortly.
           </p>
-          <Button
-            variant="default"
-            size="lg"
-            onClick={handleReset}
-            className="bg-primary hover:bg-primary/90 rounded-xl"
-          >
-            {t.quote.submitAnother}
-          </Button>
+
+          <div className="space-y-4">
+            <a
+              href="https://wa.me/94112345678?text=Hi%2C%20I%20just%20submitted%20a%20Sri%20Lanka%20tour%20request%20on%20your%20website%20and%20would%20like%20to%20discuss%20it."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center w-full h-14 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+            >
+              <MessageSquare className="w-5 h-5 mr-2" />
+              Chat with us on WhatsApp
+            </a>
+
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={handleReset}
+              className="w-full h-14 rounded-xl border-border hover:bg-muted"
+            >
+              {t.quote.submitAnother}
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted-foreground mt-6">
+            Need faster assistance? Chat with us directly.
+          </p>
         </div>
       </div>
     );

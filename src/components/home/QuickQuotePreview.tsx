@@ -32,58 +32,58 @@ export function QuickQuotePreview() {
   };
 
   return (
-    <section className="relative py-16 md:py-24 bg-gradient-to-br from-green-100/80 via-green-50/60 to-green-100/80 dark:from-[#05110d] dark:via-[#0a1f18] dark:to-[#05110d] md:overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-green-300/40 dark:via-green-900/30 to-transparent" />
-      <div className="absolute -left-20 top-20 w-96 h-96 bg-green-200/40 dark:bg-green-900/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -right-20 bottom-20 w-96 h-96 bg-green-300/30 dark:bg-green-800/10 rounded-full blur-3xl pointer-events-none" />
+    <section className="relative py-12 md:py-20 bg-white dark:bg-[#05110d] md:overflow-hidden">
 
       <div className="container mx-auto px-4 relative z-10">
 
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-green-950 dark:text-green-50 mb-4 tracking-tight">
-            {t.home?.readyToExplore || 'Craft Your Perfect Journey'}
+        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+          <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#0F3D2E] dark:text-white mb-6 tracking-tight">
+            {t.home?.readyToExplore || 'Ready to Explore Sri Lanka?'}
           </h2>
-          <p className="text-green-800/70 dark:text-green-200/60 text-base md:text-lg font-light leading-relaxed">
+          <p className="text-[#4F7A68] dark:text-green-200/70 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto">
             Tell us your preferences, and we will curate a bespoke Sri Lanka experience just for you.
           </p>
         </div>
 
         {/* Form Container */}
-        <div className="max-w-5xl mx-auto bg-[#e8f5e9]/95 dark:bg-[#0c2b1e]/90 backdrop-blur-md rounded-[2rem] p-6 md:p-10 shadow-2xl shadow-green-900/10 border border-green-100/50 dark:border-white/5 relative">
+        <div className="max-w-6xl mx-auto bg-[#114F3E] dark:bg-[#0c2b1e] rounded-[24px] p-6 md:p-10 shadow-[0_20px_40px_rgba(0,0,0,0.06)] dark:shadow-none border border-[#114F3E]/30 dark:border-white/5">
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
 
             {/* Date Inputs */}
-            <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-widest text-green-800 dark:text-green-200 ml-1">Arrival</label>
-              <DatePicker
-                date={arrivalDate}
-                setDate={setArrivalDate}
-                placeholder="Select Date"
-                minDate={new Date()}
-                className='h-12 w-full rounded-xl border-green-100 dark:border-white/10 bg-white dark:bg-black/20 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-500/10 transition-all hover:border-green-300 dark:hover:border-green-700/50 shadow-sm text-green-900 dark:text-green-100 placeholder:text-green-900/30 dark:placeholder:text-green-100/30'
-              />
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/80 dark:text-green-200 ml-1">Arrival</label>
+              <div className="relative group">
+                <DatePicker
+                  date={arrivalDate}
+                  setDate={setArrivalDate}
+                  placeholder="Select Date"
+                  minDate={new Date()}
+                  className='h-[46px] w-full rounded-xl border-transparent hover:border-white/50 hover:bg-gray-50 dark:border-white/10 bg-white dark:bg-black/20 text-sm focus:border-white/80 focus:ring-2 focus:ring-white/20 transition-all shadow-sm text-[#0F3D2E] dark:text-green-100 placeholder:text-[#4F7A68]/50 dark:placeholder:text-green-100/30 px-3'
+                />
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-widest text-green-800 dark:text-green-200 ml-1">Departure</label>
-              <DatePicker
-                date={departureDate}
-                setDate={setDepartureDate}
-                placeholder="Select Date"
-                minDate={arrivalDate || new Date()}
-                className='h-12 w-full rounded-xl border-green-100 dark:border-white/10 bg-white dark:bg-black/20 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-500/10 transition-all hover:border-green-300 dark:hover:border-green-700/50 shadow-sm text-green-900 dark:text-green-100 placeholder:text-green-900/30 dark:placeholder:text-green-100/30'
-              />
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/80 dark:text-green-200 ml-1">Departure</label>
+              <div className="relative group">
+                <DatePicker
+                  date={departureDate}
+                  setDate={setDepartureDate}
+                  placeholder="Select Date"
+                  minDate={arrivalDate || new Date()}
+                  className='h-[46px] w-full rounded-xl border-transparent hover:border-white/50 hover:bg-gray-50 dark:border-white/10 bg-white dark:bg-black/20 text-sm focus:border-white/80 focus:ring-2 focus:ring-white/20 transition-all shadow-sm text-[#0F3D2E] dark:text-green-100 placeholder:text-[#4F7A68]/50 dark:placeholder:text-green-100/30 px-3'
+                />
+              </div>
             </div>
 
             {/* Selects */}
-            <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-widest text-green-800 dark:text-green-200 ml-1">Travelers</label>
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/80 dark:text-green-200 ml-1">Travelers</label>
               <Select value={groupSize} onValueChange={setGroupSize}>
-                <SelectTrigger className="h-12 w-full rounded-xl border-green-100 dark:border-white/10 bg-white dark:bg-black/20 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-500/10 transition-all hover:border-green-300 dark:hover:border-green-700/50 shadow-sm text-green-900 dark:text-green-100" translate="no">
-                  <SelectValue placeholder="Group Size" className="placeholder:text-green-900/30" />
+                <SelectTrigger className="h-[46px] w-full rounded-xl border-transparent hover:border-white/50 hover:bg-gray-50 dark:border-white/10 bg-white dark:bg-black/20 text-sm focus:border-white/80 focus:ring-2 focus:ring-white/20 transition-all shadow-sm text-[#0F3D2E] dark:text-green-100 px-3" translate="no">
+                  <SelectValue placeholder="Group Size" className="placeholder:text-[#4F7A68]/50" />
                 </SelectTrigger>
                 <SelectContent translate="no">
                   <SelectItem value="1-2">1–2 People</SelectItem>
@@ -94,11 +94,11 @@ export function QuickQuotePreview() {
               </Select>
             </div>
 
-            <div className="space-y-3">
-              <label className="text-xs font-bold uppercase tracking-widest text-green-800 dark:text-green-200 ml-1">Style</label>
+            <div className="space-y-2">
+              <label className="text-[11px] font-bold uppercase tracking-[0.15em] text-white/80 dark:text-green-200 ml-1">Style</label>
               <Select value={tourStyle} onValueChange={setTourStyle}>
-                <SelectTrigger className="h-12 w-full rounded-xl border-green-100 dark:border-white/10 bg-white dark:bg-black/20 text-sm focus:border-green-500 focus:ring-2 focus:ring-green-500/10 transition-all hover:border-green-300 dark:hover:border-green-700/50 shadow-sm text-green-900 dark:text-green-100" translate="no">
-                  <SelectValue placeholder="Preference" className="placeholder:text-green-900/30" />
+                <SelectTrigger className="h-[46px] w-full rounded-xl border-transparent hover:border-white/50 hover:bg-gray-50 dark:border-white/10 bg-white dark:bg-black/20 text-sm focus:border-white/80 focus:ring-2 focus:ring-white/20 transition-all shadow-sm text-[#0F3D2E] dark:text-green-100 px-3" translate="no">
+                  <SelectValue placeholder="Preference" className="placeholder:text-[#4F7A68]/50" />
                 </SelectTrigger>
                 <SelectContent translate="no">
                   <SelectItem value="cultural">Heritage & Culture</SelectItem>
@@ -111,11 +111,11 @@ export function QuickQuotePreview() {
             </div>
           </div>
 
-          <div className="mt-10 flex justify-center">
+          <div className="mt-8 md:mt-10 flex justify-center">
             <Button
               onClick={handleGetQuote}
               size="lg"
-              className="w-full md:w-auto min-w-[240px] h-14 rounded-full text-base font-semibold bg-[#1a4a3b] hover:bg-[#143d30] text-white shadow-xl shadow-[#1a4a3b]/20 hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-300"
+              className="w-full md:w-auto min-w-[240px] h-[48px] rounded-full text-base font-bold bg-[#0F3D2E] text-white shadow-lg border border-white hover:bg-white hover:text-[#0F3D2E] hover:shadow-xl hover:-translate-y-[1px] transition-all duration-300"
             >
               Get My Free Quote <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
