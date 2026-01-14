@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-
-import { useRouter } from 'next/navigation';
 import {
   Users, FileText, MapPin, Package, BookOpen,
   Clock, CheckCircle, AlertCircle, Pencil, Trash2, Plus, Reply, Settings
@@ -28,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-// import { useAuth } from '@/contexts/AuthContext'; // Removed
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -97,8 +94,6 @@ interface Tour {
 }
 
 export default function AdminDashboard() {
-  // const { user, isAdmin, isLoading } = useAuth(); // Removed
-  const router = useRouter();
   const { toast } = useToast();
 
   const [stats, setStats] = useState<StatCard[]>([]);
@@ -281,9 +276,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (isLoading) {
-    return <PageLoading text="Checking permissions..." />;
-  }
+
 
   if (loading) {
     return <PageLoading text="Loading dashboard..." />;
