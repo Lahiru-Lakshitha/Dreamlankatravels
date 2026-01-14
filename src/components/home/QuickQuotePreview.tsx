@@ -32,7 +32,7 @@ export function QuickQuotePreview() {
   };
 
   return (
-    <section className="relative py-16 md:py-24 bg-gradient-to-br from-green-100/80 via-green-50/60 to-green-100/80 dark:from-[#05110d] dark:via-[#0a1f18] dark:to-[#05110d] overflow-hidden">
+    <section className="relative py-16 md:py-24 bg-gradient-to-br from-green-100/80 via-green-50/60 to-green-100/80 dark:from-[#05110d] dark:via-[#0a1f18] dark:to-[#05110d] md:overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-green-300/40 dark:via-green-900/30 to-transparent" />
       <div className="absolute -left-20 top-20 w-96 h-96 bg-green-200/40 dark:bg-green-900/10 rounded-full blur-3xl pointer-events-none" />

@@ -145,6 +145,23 @@
     }
   }
 
+  /* 
+    MOBILE IOS FIXES: Prevent layout jumps on date picker open 
+  */
+  @supports (-webkit-touch-callout: none) {
+    input[type="date"]:focus {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* 
+    Prevent page jump on focus
+  */
+  html, body {
+    scroll-behavior: auto !important;
+  }
+
   h2,
   h3,
   h4,
