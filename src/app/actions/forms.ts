@@ -76,7 +76,7 @@ export async function submitContactForm(formData: FormData) {
 
     // 2. Send Admin Email
     const emailResult = await sendEmail({
-        to: process.env.EMAIL_FROM || "admin@example.com", // Fallback if not set, usually to admin
+        to: process.env.ADMIN_NOTIFICATION_EMAIL || "lahirulakshithamax00@gmail.com",
         subject: `New Contact Message: ${data.subject}`,
         html: `
       <h1>New Message from ${data.name}</h1>
@@ -157,7 +157,7 @@ export async function submitQuoteRequest(formData: FormData): Promise<{ error?: 
 
     // 2. Send Admin Notification (Admin Email)
     await sendEmail({
-        to: process.env.EMAIL_FROM || "admin@dreamlankatravels.com", // Ensure receiving address
+        to: process.env.ADMIN_NOTIFICATION_EMAIL || "lahirulakshithamax00@gmail.com",
         replyTo: data.email, // Allow admin to reply directly to customer
         subject: `New Lead: ${data.fullName} - ${data.tourType}`,
         html: `
