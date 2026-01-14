@@ -12,12 +12,28 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-    Drawer,
-    DrawerContent,
-    DrawerTrigger,
-} from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+// iOS Scroll Lock Logic
+const isIOS =
+    typeof window !== "undefined" &&
+    /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+let scrollY = 0;
+
+const lockScroll = () => {
+    scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+};
+
+const unlockScroll = () => {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    window.scrollTo(0, scrollY);
+};
 
 interface DatePickerProps {
     date?: Date;
@@ -69,6 +85,7 @@ export function DatePicker({
     );
 
     // Fallback to desktop view during SSR to prevent hydration mismatch
+    // On Desktop, render Popover
     if (!isMounted || !isMobile) {
         return (
             <Popover open={open} onOpenChange={setOpen}>
@@ -94,35 +111,51 @@ export function DatePicker({
         );
     }
 
-    // Mobile View - Drawer
+    // Mobile View - Native Input with iOS Fix
     return (
-        <Drawer open={open} onOpenChange={setOpen}>
-            <DrawerTrigger asChild>
-                {triggerButton}
-            </DrawerTrigger>
-            <DrawerContent>
-                <div className="mx-auto w-full max-w-sm pt-6 pb-8 px-4">
-                    <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={(newDate) => {
-                            setDate(newDate);
-                            setOpen(false);
-                        }}
-                        disabled={(date) =>
-                            (minDate ? date < minDate : false) ||
-                            (maxDate ? date > maxDate : false)
+        <div className="relative w-full">
+            {/* 
+              We render the trigger button visually to maintain design consistency, 
+              but overlay the native input on top (opacity 0) to capture interactions.
+              OR we just render the native input styled exactly like the button.
+              Rendering a styled input is cleaner and more accessible.
+            */}
+            <div className="relative w-full">
+                {/* Icon positioned absolute */}
+                <CalendarIcon className={cn("absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 z-10 pointer-events-none", date ? "text-primary" : "text-muted-foreground")} />
+
+                <input
+                    type="date"
+                    disabled={disabled}
+                    value={date ? format(date, "yyyy-MM-dd") : ""}
+                    min={minDate ? format(minDate, "yyyy-MM-dd") : undefined}
+                    max={maxDate ? format(maxDate, "yyyy-MM-dd") : undefined}
+                    onChange={(e) => {
+                        const val = e.target.value;
+                        if (!val) {
+                            setDate(undefined);
+                        } else {
+                            // Create date at noon to avoid timezone shifting issues on basic date parts
+                            const d = new Date(val + "T12:00:00");
+                            setDate(d);
                         }
-                        className="mx-auto border rounded-xl"
-                        initialFocus
-                    />
-                    <div className="mt-4 flex justify-center">
-                        <Button variant="outline" onClick={() => setOpen(false)} className="w-full">
-                            Close
-                        </Button>
-                    </div>
-                </div>
-            </DrawerContent>
-        </Drawer>
+                    }}
+                    onFocus={() => {
+                        if (isIOS) lockScroll();
+                    }}
+                    onBlur={() => {
+                        if (isIOS) unlockScroll();
+                    }}
+                    className={cn(
+                        "w-full h-12 rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+                        "pl-10", // Space for icon
+                        !date && "text-muted-foreground",
+                        date && "text-foreground font-medium bg-secondary/20 border-primary/20",
+                        error && "border-destructive ring-destructive/20 focus-visible:ring-destructive/20",
+                        className
+                    )}
+                />
+            </div>
+        </div>
     );
 }
