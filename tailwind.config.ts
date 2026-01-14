@@ -147,6 +147,18 @@ const config = {
         "width-expand": {
           "0%": { width: "0%" },
           "100%": { width: "100%" },
+        },
+        cinematicUp: {
+          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        softFade: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        softScale: {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
         }
       },
 
@@ -158,6 +170,9 @@ const config = {
         "fade-up": "fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "fade-in": "fade-in 0.3s ease-out forwards",
         "scale-in": "scale-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+        "cinematic-up": "cinematicUp 0.9s cubic-bezier(0.22, 1, 0.36, 1) both",
+        "soft-fade": "softFade 0.7s ease-out both",
+        "soft-scale": "softScale 0.35s ease-out both",
       },
 
       boxShadow: {

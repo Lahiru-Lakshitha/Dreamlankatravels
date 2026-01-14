@@ -16,7 +16,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext'; // Removed
 import { FAQPreview } from '@/components/faq/FAQPreview';
 import { cn } from '@/lib/utils';
 
@@ -32,7 +32,7 @@ interface BookingFormProps {
 }
 
 export function BookingForm({ tour, onSuccess }: BookingFormProps) {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [travelDate, setTravelDate] = useState<Date>();
@@ -66,7 +66,7 @@ export function BookingForm({ tour, onSuccess }: BookingFormProps) {
       // Use raw SQL insert since types may not be updated yet
       const bookingData = {
         tour_id: tour.id,
-        user_id: user?.id || null,
+        user_id: null,
         guest_name: formData.name,
         guest_email: formData.email,
         guest_phone: formData.phone || null,

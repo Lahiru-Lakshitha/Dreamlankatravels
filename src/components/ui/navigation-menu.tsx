@@ -46,6 +46,7 @@ const NavigationMenuTrigger = React.forwardRef<
     ref={ref}
     className={cn(navigationMenuTriggerStyle(), "group", className)}
     {...props}
+    translate="no"
   >
     {children}{" "}
     <ChevronDown
@@ -67,6 +68,7 @@ const NavigationMenuContent = React.forwardRef<
       className,
     )}
     {...props}
+    translate="no"
   />
 ));
 NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName;
@@ -85,6 +87,7 @@ const NavigationMenuViewport = React.forwardRef<
       )}
       ref={ref}
       {...props}
+      translate="no"
     />
   </div>
 ));

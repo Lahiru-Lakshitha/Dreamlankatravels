@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useAuth } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext'; // Removed
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
@@ -97,7 +97,7 @@ interface Tour {
 }
 
 export default function AdminDashboard() {
-  const { user, isAdmin, isLoading } = useAuth();
+  // const { user, isAdmin, isLoading } = useAuth(); // Removed
   const router = useRouter();
   const { toast } = useToast();
 
@@ -119,22 +119,12 @@ export default function AdminDashboard() {
   const [postForm, setPostForm] = useState({ title: '', slug: '', excerpt: '', content: '', published: false });
   const [isSavingPost, setIsSavingPost] = useState(false);
 
-  useEffect(() => {
-    if (!isLoading && (!user || !isAdmin)) {
-      router.push('/');
-      toast({
-        title: 'Access Denied',
-        description: 'You do not have permission to access this page.',
-        variant: 'destructive',
-      });
-    }
-  }, [user, isAdmin, isLoading, router.push, toast]);
+  // Removed Auth Protection useEffect
 
   useEffect(() => {
-    if (isAdmin) {
-      fetchAllData();
-    }
-  }, [isAdmin]);
+    // Always fetch data now
+    fetchAllData();
+  }, []);
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -236,7 +226,7 @@ export default function AdminDashboard() {
     } else {
       const { error } = await supabase
         .from('blog_posts')
-        .insert([{ ...postForm, slug, author_id: user?.id }]);
+        .insert([{ ...postForm, slug, author_id: null }]);
 
       setIsSavingPost(false);
       if (error) {

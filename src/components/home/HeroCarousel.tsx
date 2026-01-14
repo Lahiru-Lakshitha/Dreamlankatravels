@@ -12,6 +12,9 @@ import beachImage from '@/assets/destination-beach.jpg';
 import templeImage from '@/assets/destination-temple.jpg';
 import wildlifeImage from '@/assets/destination-wildlife.jpg';
 
+// Internal Component not needed anymore with CSS keyframes
+// The key={slide.id} ensures re-mount and animation replay
+
 const slides = [
   {
     id: 1,
@@ -81,7 +84,7 @@ function HeroCarouselBase() {
 
   return (
     <section
-      className="relative w-full h-[75vh] lg:h-[85vh] overflow-hidden bg-black group"
+      className="relative w-full h-[75vh] lg:h-[85vh] overflow-hidden bg-black group touch-manipulation"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       aria-label="Featured Destinations Carousel"
@@ -105,7 +108,7 @@ function HeroCarouselBase() {
               quality={90}
             />
             {/* Gradient Overlay for Text Readability */}
-            <div className="absolute inset-0 bg-black/30 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+            <div className="absolute inset-0 bg-black/30 bg-gradient-to-t from-black/60 via-transparent to-black/20 pointer-events-none" />
           </div>
         );
       })}
@@ -119,17 +122,24 @@ function HeroCarouselBase() {
               if (!isActive) return null;
 
               return (
-                <div key={slide.id} className="animate-fade-in-up">
-                  <span className="inline-block px-4 py-1.5 mb-4 text-xs font-bold tracking-widest text-white uppercase bg-white/10 backdrop-blur-md rounded-full border border-white/20">
+                <div key={slide.id} className="relative z-10 w-full flex flex-col items-center will-change-transform will-change-opacity">
+                  {/* 1. Badge */}
+                  <span className="inline-block px-4 py-1.5 mb-4 text-xs font-bold tracking-widest text-white uppercase bg-white/10 backdrop-blur-md rounded-full border border-white/20 animate-soft-scale">
                     Luxury Sri Lanka
                   </span>
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-4 leading-tight drop-shadow-md">
+
+                  {/* 2. Headline */}
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white mb-4 leading-tight drop-shadow-md animate-cinematic-up delay-100">
                     {slide.title}
                   </h1>
-                  <p className="text-lg md:text-xl text-white/90 font-light max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed drop-shadow-sm">
+
+                  {/* 3. Subheadline */}
+                  <p className="text-lg md:text-xl text-white/90 font-light max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed drop-shadow-sm animate-soft-fade delay-300">
                     {slide.subtitle}
                   </p>
-                  <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+
+                  {/* 4. CTA Buttons */}
+                  <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 animate-soft-scale delay-500">
                     <Link href={slide.link}>
                       <Button size="lg" className="w-full sm:w-auto rounded-full px-6 sm:px-8 h-10 sm:h-12 text-sm sm:text-base bg-white text-primary hover:bg-white/90 transition-transform hover:scale-105 shadow-xl font-semibold">
                         Explore Tours
@@ -155,18 +165,18 @@ function HeroCarouselBase() {
       {/* Navigation Controls - Premium Glass Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg group/nav focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="absolute left-4 md:left-8 top-[38%] -translate-y-1/2 md:top-1/2 md:-translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 group/nav bg-black/40 text-white pointer-events-auto opacity-0 group-hover:opacity-100 active:opacity-100 focus:opacity-100 sm:bg-black/40 sm:text-white md:border md:border-white/20 md:bg-white/10 md:text-white md:shadow-lg md:backdrop-blur-md md:hover:bg-white/20 md:hover:scale-105 md:active:scale-95"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover/nav:-translate-x-0.5" />
+        <ChevronLeft className="w-4 h-4 md:w-6 md:h-6 transition-transform group-hover/nav:-translate-x-0.5" />
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg group/nav focus:outline-none focus:ring-2 focus:ring-white/50"
+        className="absolute right-4 md:right-8 top-[38%] -translate-y-1/2 md:top-1/2 md:-translate-y-1/2 z-30 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/50 group/nav bg-black/40 text-white pointer-events-auto opacity-0 group-hover:opacity-100 active:opacity-100 focus:opacity-100 sm:bg-black/40 sm:text-white md:border md:border-white/20 md:bg-white/10 md:text-white md:shadow-lg md:backdrop-blur-md md:hover:bg-white/20 md:hover:scale-105 md:active:scale-95"
         aria-label="Next slide"
       >
-        <ChevronRight className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover/nav:translate-x-0.5" />
+        <ChevronRight className="w-4 h-4 md:w-6 md:h-6 transition-transform group-hover/nav:translate-x-0.5" />
       </button>
 
       {/* Progress Indicators */}

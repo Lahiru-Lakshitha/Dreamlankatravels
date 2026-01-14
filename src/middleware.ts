@@ -1,62 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
-    let response = NextResponse.next({
+    // Basic pass-through middleware
+    // We can add headers logic here if needed for transitions/etc in future
+    return NextResponse.next({
         request: {
             headers: request.headers,
         },
     });
-
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-            cookies: {
-                getAll() {
-                    return request.cookies.getAll();
-                },
-                setAll(cookiesToSet) {
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        request.cookies.set(name, value)
-                    );
-                    response = NextResponse.next({
-                        request,
-                    });
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        response.cookies.set(name, value, options)
-                    );
-                },
-            },
-        }
-    );
-
-    // This will refresh session if expired - required for Server Components
-    // https://supabase.com/docs/guides/auth/server-side/nextjs
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
-    // Route Protection Logic
-    const path = request.nextUrl.pathname;
-
-    // 1. If user is logged in, prevent access to /auth (login/signup), BUT allow callback/update-password
-    if (user && path.startsWith("/auth") &&
-        !path.startsWith("/auth/logout") &&
-        !path.startsWith("/auth/callback") &&
-        !path.startsWith("/auth/update-password") &&
-        !path.startsWith("/auth/confirm-success")
-    ) {
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-
-    // 2. If user is NOT logged in, prevent access to protected routes
-    const protectedRoutes = ["/dashboard", "/account", "/admin"];
-    if (!user && protectedRoutes.some(route => path.startsWith(route))) {
-        return NextResponse.redirect(new URL("/auth", request.url));
-    }
-
-    return response;
 }
 
 export const config = {

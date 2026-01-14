@@ -13,21 +13,15 @@ import { t } from '@/data/translations';
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  user: any;
-  isAdmin: boolean;
   isDark: boolean;
   onToggleTheme: () => void;
-  onSignOut: () => void;
 }
 
 export function MobileMenu({
   isOpen,
   onClose,
-  user,
-  isAdmin,
   isDark,
   onToggleTheme,
-  onSignOut
 }: MobileMenuProps) {
   const pathname = usePathname();
 
@@ -84,6 +78,7 @@ export function MobileMenu({
             exit={{ x: '100%' }}
             transition={{ type: "spring", damping: 25, stiffness: 200, mass: 0.8 }}
             className="fixed inset-y-0 right-0 z-[101] w-[300px] sm:w-[350px] bg-background shadow-2xl flex flex-col lg:hidden h-full"
+            translate="no"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-border/10">
@@ -138,23 +133,7 @@ export function MobileMenu({
                   </div>
                 </div>
 
-                {/* Auth */}
-                {user ? (
-                  <button
-                    onClick={onSignOut}
-                    className="flex items-center px-4 py-3 w-full text-destructive hover:bg-destructive/10 rounded-xl transition-colors text-sm font-medium"
-                  >
-                    <LogOut className="w-4 h-4 mr-3" />
-                    Sign Out
-                  </button>
-                ) : (
-                  <Link href="/auth" onClick={onClose} className="block">
-                    <div className="flex items-center px-4 py-3 text-foreground hover:bg-muted/50 rounded-xl transition-colors text-sm font-medium">
-                      <User className="w-4 h-4 mr-3" />
-                      Sign In / Account
-                    </div>
-                  </Link>
-                )}
+                {/* Auth Removed */}
               </div>
             </div>
 

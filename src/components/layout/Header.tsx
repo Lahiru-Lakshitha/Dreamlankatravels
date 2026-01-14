@@ -5,15 +5,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, Moon, Sun, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'; // Kept imports for safety if used elsewhere, but removed useAuth
+// Actually remove useAuth:
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext'; // REMOVED
 import { t } from '@/data/translations';
 import dynamic from 'next/dynamic';
 import { NavMenu } from './NavMenu';
@@ -27,7 +22,7 @@ function HeaderBase() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const pathname = usePathname();
-  const { user, profile, isAdmin, isLoading, signOut, updateProfile } = useAuth();
+  // Auth Removed
 
   // Sentinel for IntersectionObserver (High Performance Scroll Spy)
   // When this pixel is visible, we are at the top. When hidden, we are scrolled.
@@ -55,32 +50,19 @@ function HeaderBase() {
 
   // Theme Logic
   useEffect(() => {
-    if (profile) {
-      setIsDark(profile.dark_mode);
-      document.documentElement.classList.toggle('dark', profile.dark_mode);
-    } else {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'dark') {
-        setIsDark(true);
-        document.documentElement.classList.add('dark');
-      }
+    // Removed auth profile theme sync, just use local storage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setIsDark(true);
+      document.documentElement.classList.add('dark');
     }
-  }, [profile]);
+  }, []); // Run once
 
   const toggleTheme = async () => {
     const newDarkMode = !isDark;
     setIsDark(newDarkMode);
     document.documentElement.classList.toggle('dark', newDarkMode);
     localStorage.setItem('theme', newDarkMode ? 'dark' : 'light');
-
-    if (user && updateProfile) {
-      await updateProfile({ dark_mode: newDarkMode });
-    }
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    setIsMobileMenuOpen(false);
   };
 
   const isHome = pathname === '/';
@@ -159,44 +141,7 @@ function HeaderBase() {
               {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
 
-            {/* Auth Menu */}
-            {isLoading ? (
-              <div className="w-8 h-8 rounded-full bg-white/20 animate-pulse" />
-            ) : user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className={cn("rounded-full px-2 gap-2 hover:bg-white/20", iconColor)}>
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-current">
-                      <User className="w-4 h-4" />
-                    </div>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 rounded-xl shadow-xl backdrop-blur-xl bg-background/95 border-border/50">
-                  <div className="px-3 py-2 border-b border-border/50">
-                    <p className="text-sm font-semibold truncate">{profile?.full_name || 'Traveler'}</p>
-                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                  </div>
-                  <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="cursor-pointer py-2.5"><LayoutDashboard className="w-4 h-4 mr-2" /> {t.nav.myDashboard}</Link>
-                  </DropdownMenuItem>
-                  {isAdmin && (
-                    <DropdownMenuItem asChild>
-                      <Link href="/admin" className="cursor-pointer py-2.5"><LayoutDashboard className="w-4 h-4 mr-2" /> Admin</Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:bg-destructive/10 cursor-pointer py-2.5">
-                    <LogOut className="w-4 h-4 mr-2" /> {t.nav.signOut}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link href="/auth" className="hidden sm:block">
-                <Button variant="ghost" size="sm" className={cn("rounded-full px-4 hover:bg-white/20", iconColor)}>
-                  {t.nav.signIn}
-                </Button>
-              </Link>
-            )}
+            {/* Auth Menu Removed */}
 
             {/* CTA Button */}
             <Link href="/quote" className="hidden md:block ml-2">
@@ -228,11 +173,8 @@ function HeaderBase() {
         <MobileMenu
           isOpen={isMobileMenuOpen}
           onClose={() => setIsMobileMenuOpen(false)}
-          user={user}
-          isAdmin={isAdmin}
           isDark={isDark}
           onToggleTheme={toggleTheme}
-          onSignOut={handleSignOut}
         />
       </header>
     </>

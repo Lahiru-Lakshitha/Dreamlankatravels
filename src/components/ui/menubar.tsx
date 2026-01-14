@@ -37,6 +37,7 @@ const MenubarTrigger = React.forwardRef<
       className,
     )}
     {...props}
+    translate="no"
   />
 ));
 MenubarTrigger.displayName = MenubarPrimitive.Trigger.displayName;
@@ -55,6 +56,7 @@ const MenubarSubTrigger = React.forwardRef<
       className,
     )}
     {...props}
+    translate="no"
   >
     {children}
     <ChevronRight className="ml-auto h-4 w-4" />
@@ -73,6 +75,7 @@ const MenubarSubContent = React.forwardRef<
       className,
     )}
     {...props}
+    translate="no"
   />
 ));
 MenubarSubContent.displayName = MenubarPrimitive.SubContent.displayName;
@@ -92,6 +95,7 @@ const MenubarContent = React.forwardRef<
         className,
       )}
       {...props}
+      translate="no"
     />
   </MenubarPrimitive.Portal>
 ));

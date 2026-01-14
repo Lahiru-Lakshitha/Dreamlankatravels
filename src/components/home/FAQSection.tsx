@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from 'react';
-import { Plus, Minus, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, memo } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 const faqs = [
     {
@@ -27,14 +26,54 @@ const faqs = [
     }
 ];
 
-export function FAQSection() {
-    const [openIndex, setOpenIndex] = useState<number | null>(0); // First one open by default
+// Memoized Item for Performance Isolation
+const FAQItem = memo(({ question, answer }: { question: string, answer: string }) => {
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
+        <div
+            className={`rounded-2xl transition-colors duration-200 overflow-hidden border ${isOpen
+                    ? 'bg-white dark:bg-white/5 border-primary/20 dark:border-white/10'
+                    : 'bg-white/50 dark:bg-white/[0.02] border-transparent hover:bg-white dark:hover:bg-white/5 hover:border-primary/5 dark:hover:border-white/5'
+                }`}
+        >
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="flex items-center justify-between w-full p-6 text-left focus:outline-none select-none"
+                aria-expanded={isOpen}
+            >
+                <span className={`text-lg font-medium pr-8 transition-colors duration-200 ${isOpen ? 'text-primary' : 'text-foreground/80'
+                    }`}>
+                    {question}
+                </span>
+                <span className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-200 ${isOpen ? 'bg-primary text-white' : 'bg-primary/5 text-primary'
+                    }`}>
+                    <ChevronDown className={`w-5 h-5 transition-transform duration-200 ease-out will-change-transform ${isOpen ? 'rotate-180' : 'rotate-0'
+                        }`} />
+                </span>
+            </button>
+
+            {/* Instant Toggle with Opacity Fade */}
+            <div
+                className={`px-6 pb-6 pt-0 text-muted-foreground leading-relaxed ${isOpen ? 'block' : 'hidden'}`}
+            >
+                <div className="w-full h-px bg-border/40 mb-4 opacity-50" />
+                <div className="animate-in fade-in slide-in-from-top-1 duration-200 ease-out">
+                    {answer}
+                </div>
+            </div>
+        </div>
+    );
+});
+
+FAQItem.displayName = 'FAQItem';
+
+export function FAQSection() {
+    return (
         <section className="py-12 bg-background relative overflow-hidden">
-            {/* Decorative Elements */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-sunset/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3" />
+            {/* Decorative Elements - Pure CSS */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-96 h-96 bg-sunset/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/3 pointer-events-none" />
 
             <div className="container mx-auto px-4 relative z-10">
                 <div className="text-center max-w-2xl mx-auto mb-10">
@@ -51,50 +90,14 @@ export function FAQSection() {
 
                 <div className="max-w-3xl mx-auto space-y-4">
                     {faqs.map((faq, index) => (
-                        <div
+                        <FAQItem
                             key={index}
-                            className={`rounded-2xl transition-all duration-300 overflow-hidden ${openIndex === index
-                                ? 'bg-white dark:bg-white/5 shadow-lg border border-primary/20 dark:border-white/10 scale-[1.02]'
-                                : 'bg-white/50 dark:bg-white/[0.02] border border-transparent hover:bg-white dark:hover:bg-white/5 hover:border-primary/5 dark:hover:border-white/5 hover:shadow-soft'
-                                }`}
-                        >
-                            <button
-                                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                                className="flex items-center justify-between w-full p-6 text-left focus:outline-none"
-                            >
-                                <span className={`text-lg font-medium pr-8 transition-colors ${openIndex === index ? 'text-primary' : 'text-foreground/80'
-                                    }`}>
-                                    {faq.question}
-                                </span>
-                                <span className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${openIndex === index
-                                    ? 'bg-primary text-white rotate-180'
-                                    : 'bg-primary/5 text-primary'
-                                    }`}>
-                                    <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${openIndex === index ? '' : 'rotate-0'}`} />
-                                </span>
-                            </button>
-
-                            <AnimatePresence initial={false}>
-                                {openIndex === index && (
-                                    <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
-                                    >
-                                        <div className="px-6 pb-6 pt-0 text-muted-foreground leading-relaxed">
-                                            <div className="w-full h-px bg-border/40 mb-4" />
-                                            {faq.answer}
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
+                            question={faq.question}
+                            answer={faq.answer}
+                        />
                     ))}
                 </div>
             </div>
         </section>
     );
 }
-
-

@@ -24,7 +24,7 @@ export default function LanguageSwitcher() {
 
   return (
     <>
-      <div id="lang-switcher" ref={switcherRef} className="notranslate">
+      <div id="lang-switcher" ref={switcherRef} className="notranslate" translate="no">
         <button
           id="lang-btn"
           aria-label="Change language"

@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext'; // Removed
 
 interface ReviewFormProps {
   tourId: string;
@@ -16,7 +16,7 @@ interface ReviewFormProps {
 }
 
 export function ReviewForm({ tourId, onSuccess }: ReviewFormProps) {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rating, setRating] = useState(0);
@@ -47,7 +47,7 @@ export function ReviewForm({ tourId, onSuccess }: ReviewFormProps) {
     try {
       const { error } = await supabase.from('reviews').insert({
         tour_id: tourId,
-        user_id: user?.id || null,
+        user_id: null,
         reviewer_name: formData.name,
         reviewer_email: formData.email || null,
         reviewer_country: formData.country || null,
@@ -110,8 +110,8 @@ export function ReviewForm({ tourId, onSuccess }: ReviewFormProps) {
             >
               <Star
                 className={`w-8 h-8 ${star <= (hoveredRating || rating)
-                    ? 'text-sunset fill-sunset'
-                    : 'text-muted-foreground'
+                  ? 'text-sunset fill-sunset'
+                  : 'text-muted-foreground'
                   }`}
               />
             </button>

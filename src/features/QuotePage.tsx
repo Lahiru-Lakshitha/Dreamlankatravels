@@ -24,7 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useAuth } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext'; // Removed
 import { t } from '@/data/translations';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -72,7 +72,7 @@ export default function QuotePage() {
   const searchParams = useSearchParams();
   const [selectedDestinations, setSelectedDestinations] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { user, profile } = useAuth();
+  // const { user, profile } = useAuth(); // Removed
 
   const { toast } = useToast();
 
@@ -99,17 +99,8 @@ export default function QuotePage() {
     },
   });
 
-  // Pre-fill form with user data and URL params
+  // Pre-fill form with URL params
   useEffect(() => {
-    if (profile) {
-      setValue('fullName', profile.full_name || '');
-      setValue('email', profile.email || user?.email || '');
-      setValue('phone', profile.phone || '');
-      setValue('country', profile.country || '');
-    } else if (user) {
-      setValue('email', user.email || '');
-    }
-
     // Pre-fill from URL params (from QuickQuotePreview)
     const arrival = searchParams.get('arrival');
     const departure = searchParams.get('departure');
@@ -130,7 +121,7 @@ export default function QuotePage() {
       const tourDetails = `I am interested in a custom quote for the tour: "${tourName}"${duration ? ` (${duration})` : ''}.${tourDestinations ? `\n\nDestinations: ${tourDestinations}` : ''}${tourId ? `\n(Tour ID: ${tourId})` : ''}`;
       setValue('specialRequests', tourDetails);
     }
-  }, [profile, user, setValue, searchParams]);
+  }, [setValue, searchParams]);
 
   const toggleDestination = (dest: string) => {
     setSelectedDestinations(prev =>
@@ -552,21 +543,7 @@ export default function QuotePage() {
         </div>
       </section>
 
-      {/* Mobile Sticky CTA */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-card/95 backdrop-blur-sm border-t border-border/50 sm:hidden z-50">
-        <Button
-          type="button"
-          onClick={() => document.querySelector('form')?.requestSubmit()}
-          disabled={isSubmitting}
-          className="w-full h-12 rounded-xl text-base font-semibold bg-primary hover:bg-primary/90"
-        >
-          {isSubmitting ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : (
-            'Get My Quote'
-          )}
-        </Button>
-      </div>
+      {/* Mobile Sticky CTA Removed */}
     </div>
   );
 }
