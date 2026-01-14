@@ -28,7 +28,7 @@ export async function sendEmail({ to, subject, html, from, replyTo }: SendEmailP
         });
 
         if (error) {
-            console.error('Resend Error:', error);
+            console.error('Resend Error:', { message: error.message, statusCode: (error as any).statusCode || (error as any).status, name: error.name });
             return { success: false, error };
         }
 
