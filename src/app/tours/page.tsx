@@ -1,11 +1,10 @@
 import { Suspense } from 'react';
 import ToursPage from '@/features/ToursPage';
 import { PageLoading } from '@/components/ui/loading-spinner';
-import { createClient } from '@/lib/supabase/server';
+import { supabase } from '@/integrations/supabase/client';
 import { FALLBACK_TOURS } from '@/data/tours';
 
 async function getTours() {
-    const supabase = createClient();
     const { data } = await supabase
         .from('tours')
         .select('*')

@@ -45,23 +45,16 @@ export const metadata: Metadata = {
   },
 };
 
-import { createClient } from "@/lib/supabase/server";
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = createClient();
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-
   return (
     <html lang="en" className={`${playfair.variable} ${outfit.variable} scroll-smooth`}>
       <body className="font-sans antialiased bg-background text-foreground selection:bg-gold/30 selection:text-foreground">
 
-        <Providers initialSession={session}>
+        <Providers>
           <Layout>{children}</Layout>
           <LanguageSwitcher />
         </Providers>

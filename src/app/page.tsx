@@ -1,9 +1,8 @@
 import HomePage from "@/features/HomePage";
-import { createClient } from "@/lib/supabase/server";
+import { supabase } from "@/integrations/supabase/client";
 import { FALLBACK_TOURS } from "@/hooks/useTours";
 
 async function getFeaturedTours() {
-    const supabase = createClient();
     const { data } = await supabase
         .from('tours')
         .select('*')

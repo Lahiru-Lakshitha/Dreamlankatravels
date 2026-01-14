@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
+import { supabase } from "@/integrations/supabase/client";
 import { sendEmail } from "@/lib/email";
 
 // --- Schemas ---
@@ -53,10 +53,10 @@ export async function submitContactForm(formData: FormData) {
     }
 
     const data = validatedFields.data;
-    const supabase = createClient();
+
 
     // 1. Save to Supabase (Optional but recommended)
-    const { error: dbError } = await supabase
+    const { error: dbError } = await (supabase as any)
         .from("contact_messages")
         .insert([
             {
@@ -127,7 +127,7 @@ export async function submitQuoteRequest(formData: FormData) {
     }
 
     const data = validatedFields.data;
-    const supabase = createClient();
+
 
     // 1. Save to Supabase
     const { error: dbError } = await supabase
@@ -212,7 +212,7 @@ export async function submitTripPlan(formData: FormData) {
     }
 
     const data = validatedFields.data;
-    const supabase = createClient();
+
 
     // 1. Save to Supabase (assuming a 'trip_plans' or 'leads' table)
     // Since we don't have user email here typically unless they are logged in or prompt for it.
@@ -223,7 +223,7 @@ export async function submitTripPlan(formData: FormData) {
     // Actually, let's assume this is for a "Lead" capture.
 
     // For now, I'll log it to `trip_requests` if table exists.
-    const { error: dbError } = await supabase.from('trip_plans').insert([{
+    const { error: dbError } = await (supabase as any).from('trip_plans').insert([{
         start_date: data.startDate || null,
         end_date: data.endDate || null,
         budget_min: data.budgetMin,
